@@ -156,6 +156,7 @@ Vector.prototype.drawTile = function(bz, bx, by, z, x, y, format, scale, callbac
             // No content type for header-only.
             break;
         case 'json':
+        case 'geojson':	
         case 'utf':
             headers['Content-Type'] = 'application/json';
             break;
@@ -189,6 +190,9 @@ Vector.prototype.drawTile = function(bz, bx, by, z, x, y, format, scale, callbac
             var opts = {z:z, x:x, y:y, scale:scale, buffer_size:256 * scale};
             if (format === 'json') {
                 try { return callback(null, vtile.toJSON(), headers); }
+                catch(err) { return callback(err); }
+            } else if (format == 'geojson') {
+                try { return callback(null, vtile.toGeoJSON('__array__'), headers); }
                 catch(err) { return callback(err); }
             } else if (format === 'utf') {
                 var surface = new mapnik.Grid(256,256);
