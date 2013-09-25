@@ -263,8 +263,10 @@ Vector.prototype.getTile = function(z, x, y, callback) {
     // Overzooming support.
     if (bz > this._maxzoom) {
         bz = this._maxzoom;
-        bx = Math.floor(x / Math.pow(2, z - this._maxzoom));
-        by = Math.floor(y / Math.pow(2, z - this._maxzoom));
+        if (format != "geojson") {
+            bx = Math.floor(x / Math.pow(2, z - this._maxzoom));
+            by = Math.floor(y / Math.pow(2, z - this._maxzoom));
+        }
     }
 
     // For nonmasked sources or bz within the maskrange attempt 1 draw.
