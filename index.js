@@ -37,6 +37,10 @@ function Vector(uri, callback) {
 };
 util.inherits(Vector, require('events').EventEmitter);
 
+
+Vector.registerProtocols = function(tilelive) {
+    tilelive.protocols['vector:'] = Vector;
+};
 // Helper for callers to ensure source is open. This is not built directly
 // into the constructor because there is no good auto cache-keying system
 // for these tile sources (ie. sharing/caching is best left to the caller).
@@ -152,6 +156,7 @@ Vector.prototype.drawTile = function(bz, bx, by, z, x, y, format, scale, callbac
             // No content type for header-only.
             break;
         case 'json':
+        case 'geojson':	
         case 'utf':
             headers['Content-Type'] = 'application/json';
             break;
@@ -185,6 +190,9 @@ Vector.prototype.drawTile = function(bz, bx, by, z, x, y, format, scale, callbac
             var opts = {z:z, x:x, y:y, scale:scale, buffer_size:256 * scale};
             if (format === 'json') {
                 try { return callback(null, vtile.toJSON(), headers); }
+                catch(err) { return callback(err); }
+            } else if (format == 'geojson') {
+                try { return callback(null, vtile.toGeoJSON('__array__'), headers); }
                 catch(err) { return callback(err); }
             } else if (format === 'utf') {
                 var surface = new mapnik.Grid(256,256);
@@ -255,8 +263,10 @@ Vector.prototype.getTile = function(z, x, y, callback) {
     // Overzooming support.
     if (bz > this._maxzoom) {
         bz = this._maxzoom;
-        bx = Math.floor(x / Math.pow(2, z - this._maxzoom));
-        by = Math.floor(y / Math.pow(2, z - this._maxzoom));
+        if (format != "geojson") {
+            bx = Math.floor(x / Math.pow(2, z - this._maxzoom));
+            by = Math.floor(y / Math.pow(2, z - this._maxzoom));
+        }
     }
 
     // For nonmasked sources or bz within the maskrange attempt 1 draw.
@@ -322,4 +332,17 @@ Vector.prototype.getInfo = function(callback) {
     }, {});
     return callback(null, this._info);
 };
+
+Vector.prototype.startWriting = function(callback) {
+    callback(null);
+};
+
+Vector.prototype.stopWriting = function(callback) {
+    callback(null);
+};
+
+Vector.prototype.close = function(callback) {
+    callback(null);
+};
+
 
