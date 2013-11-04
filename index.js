@@ -222,6 +222,41 @@ Vector.prototype.drawTile = function(bz, bx, by, z, x, y, format, scale, callbac
 Vector.prototype.getTile = function(z, x, y, callback) {
     if (!this._map) return callback(new Error('Tilesource not loaded'));
 
+    var getTile = function() {
+        // Hack around tilelive API - allow params to be passed per request
+        // as attributes of the callback function.
+        var format = callback.format || this._format;
+        var scale = callback.scale || this._scale;
+
+        // If scale > 1 adjusts source data zoom level inversely.
+        // scale 2x => z-1, scale 4x => z-2, scale 8x => z-3, etc.
+        var d = Math.round(Math.log(scale)/Math.log(2));
+        var bz = (z - d) > this._minzoom ? z - d : this._minzoom;
+        var bx = Math.floor(x / Math.pow(2, z - bz));
+        var by = Math.floor(y / Math.pow(2, z - bz));
+
+        // Overzooming support.
+        if (bz > this._maxzoom) {
+            bz = this._maxzoom;
+            bx = Math.floor(x / Math.pow(2, z - this._maxzoom));
+            by = Math.floor(y / Math.pow(2, z - this._maxzoom));
+        }
+
+        // For nonmasked sources or bz within the maskrange attempt 1 draw.
+        if (!this._maskLevel || bz <= this._maskLevel)
+            return this.drawTile(bz, bx, by, z, x, y, format, scale, callback);
+
+        // Above the maskLevel errors should attempt a second draw using the mask.
+        this.drawTile(bz, bx, by, z, x, y, format, scale, function(err, buffer, headers) {
+            if (!err) return callback(err, buffer, headers);
+            if (err && err.message !== 'Tile does not exist') return callback(err);
+            bz = this._maskLevel;
+            bx = Math.floor(x / Math.pow(2, z - this._maskLevel));
+            by = Math.floor(y / Math.pow(2, z - this._maskLevel));
+            this.drawTile(bz, bx, by, z, x, y, format, scale, callback);
+        }.bind(this));
+    }.bind(this);
+
     // Lazy load min/maxzoom/maskLevel info.
     if (this._maxzoom === undefined) return this._backend.getInfo(function(err, info) {
         if (err) return callback(err);
@@ -237,41 +272,10 @@ Vector.prototype.getTile = function(z, x, y, callback) {
             this._maskLevel = this._backend.data.maskLevel;
         }
 
-        return this.getTile(z, x, y, callback);
+        return getTile();
     }.bind(this));
 
-    // Hack around tilelive API - allow params to be passed per request
-    // as attributes of the callback function.
-    var format = callback.format || this._format;
-    var scale = callback.scale || this._scale;
-
-    // If scale > 1 adjusts source data zoom level inversely.
-    // scale 2x => z-1, scale 4x => z-2, scale 8x => z-3, etc.
-    var d = Math.round(Math.log(scale)/Math.log(2));
-    var bz = (z - d) > this._minzoom ? z - d : this._minzoom;
-    var bx = Math.floor(x / Math.pow(2, z - bz));
-    var by = Math.floor(y / Math.pow(2, z - bz));
-
-    // Overzooming support.
-    if (bz > this._maxzoom) {
-        bz = this._maxzoom;
-        bx = Math.floor(x / Math.pow(2, z - this._maxzoom));
-        by = Math.floor(y / Math.pow(2, z - this._maxzoom));
-    }
-
-    // For nonmasked sources or bz within the maskrange attempt 1 draw.
-    if (!this._maskLevel || bz <= this._maskLevel)
-        return this.drawTile(bz, bx, by, z, x, y, format, scale, callback);
-
-    // Above the maskLevel errors should attempt a second draw using the mask.
-    this.drawTile(bz, bx, by, z, x, y, format, scale, function(err, buffer, headers) {
-        if (!err) return callback(err, buffer, headers);
-        if (err && err.message !== 'Tile does not exist') return callback(err);
-        bz = this._maskLevel;
-        bx = Math.floor(x / Math.pow(2, z - this._maskLevel));
-        by = Math.floor(y / Math.pow(2, z - this._maskLevel));
-        this.drawTile(bz, bx, by, z, x, y, format, scale, callback);
-    }.bind(this));
+    return getTile();
 };
 
 Vector.prototype.getGrid = function(z, x, y, callback) {
