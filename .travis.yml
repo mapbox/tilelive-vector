@@ -11,6 +11,7 @@ before_install:
  - sudo apt-get update -qq
 
 install:
+ - sudo apt-get install graphicsmagick
  - sudo apt-get -qq install libprotobuf7 libprotobuf-dev protobuf-compiler
  - npm install mocha
 
