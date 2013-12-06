@@ -1,54 +1,43 @@
 var fs = require('fs');
 var util = require('util');
 var path = require('path');
-var spawn = require('child_process').spawn;
+var gm = require('gm');
 var exec = require('child_process').exec;
 var existsSync = require('fs').existsSync || require('path').existsSync
 
-var image_magick_available = true;
+var graphics_magick_available = true;
 var overwrite = false;
 
-exec('compare -h', function(error, stdout, stderr) {
+exec('gm compare -help', function(error, stdout, stderr) {
     if (error !== null) {
-      image_magick_available = false;
+      graphics_magick_available = false;
     }
 });
 
-module.exports = function imageEqualsFile(buffer, file, meanError, callback) {
-    if (typeof meanError == 'function') {
-        callback = meanError;
-        meanError = 0.001;
+module.exports = function imageEqualsFile(buffer, fixture, callback) {
+    var fixturesize = fs.statSync(fixture).size;
+    var sizediff = Math.abs(fixturesize - buffer.length) / fixturesize;
+    if (sizediff > 0.10) {
+        return callback(new Error('Image size is too different from fixture: ' + buffer.length + ' vs. ' + fixturesize));
     }
 
-    file = path.resolve(file);
-    if (!image_magick_available) {
-        throw new Error("imagemagick 'compare' tool is not available, please install before running tests");
+    if (!graphics_magick_available) {
+        throw new Error("graphicsmagick 'compare' tool is not available, please install before running tests");
     }
     
-    var type = path.extname(file);
-    var result = path.join(path.dirname(file), path.basename(file, type) + '.result' + type);
-    fs.writeFileSync(result, buffer);
-    var compare = spawn('compare', ['-metric', 'MAE', result, file, '/dev/null' ]);
-    var error = '';
-    compare.stderr.on('data', function(data) {
-        error += data.toString();
-    });
-    compare.on('exit', function(code, signal) {
-        if (code) {
-            return callback(new Error((error || 'Exited with code ' + code) + ': ' + result));
-        }
-        var similarity = parseFloat(error.match(/^\d+(?:\.\d+)?\s+\(([^\)]+)\)\s*$/)[1]);
-        if (similarity > meanError) {
-            var err = new Error('Images not equal: ' + error.trim() + ':\n' + result + '\n'+file);
-            err.similarity = similarity;
-            callback(err);
-        } else {
-            if (existsSync(result)) {
-                // clean up old failures
-                fs.unlinkSync(result);
+    var type = path.extname(fixture);
+    var actual = path.join(path.dirname(fixture), path.basename(fixture, type) + '.result' + type);
+    fs.writeFile(actual, buffer, function(err) {
+        if (err) return callback(err);
+        var tolerance = 0.008;
+        gm.compare(fixture, actual, tolerance, function(err, isEqual, equality, raw) {
+            if (err) return callback(err);
+            // Clean up old failures.
+            if (existsSync(actual)) fs.unlinkSync(actual);
+            if (!isEqual) {
+                return callback(new Error('Image is too different from fixture: ' + equality + ' > ' + tolerance));
             }
-            callback(null);
-        }
+            callback();
+        });
     });
-    compare.stdin.end();
 };
