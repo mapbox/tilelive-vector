@@ -1,11 +1,22 @@
 var tilelive = require('tilelive');
 var mapnik = require('mapnik');
+var fs = require('fs');
+var tar = require('tar');
+var url = require('url');
 var zlib = require('zlib');
 var path = require('path');
 var util = require('util');
 var crypto = require('crypto');
+var request = require('request');
+var exists = fs.exists || require('path').exists;
+var numeral = require('numeral');
 
 module.exports = Vector;
+module.exports.tm2z = tm2z;
+
+function md5(str) {
+    return crypto.createHash('md5').update(str).digest('hex');
+};
 
 function Task() {
     this.err = null;
@@ -37,6 +48,12 @@ function Vector(uri, callback) {
 };
 util.inherits(Vector, require('events').EventEmitter);
 
+Vector.registerProtocols = function(tilelive) {
+    tilelive.protocols['vector:'] = Vector;
+    tilelive.protocols['tm2z:'] = tm2z;
+    tilelive.protocols['tm2z+http:'] = tm2z;
+};
+
 // Helper for callers to ensure source is open. This is not built directly
 // into the constructor because there is no good auto cache-keying system
 // for these tile sources (ie. sharing/caching is best left to the caller).
@@ -55,6 +72,8 @@ Vector.prototype.update = function(opts, callback) {
         strict: false,
         base: this._base + '/'
     }, function(err) {
+        if (err) return callback(err);
+
         delete this._info;
         this._xml = opts.xml;
         this._map = map;
@@ -323,3 +342,177 @@ Vector.prototype.getInfo = function(callback) {
     return callback(null, this._info);
 };
 
+Vector.prototype.profile = function(callback) {
+    var map = new mapnik.Map(256,256);
+
+    var mapFromStringStart = Date.now();
+    map.fromString(this._xml, {
+        strict: false,
+        base: this._base + '/'
+    }, function(err) {
+        if (err) return callback(err);
+        var mapFromStringTime = Date.now() - mapFromStringStart;
+        var renderStart = Date.now();
+        this.drawTile(0, 0, 0, 0, 0, 0, 'png', 1, function(err, buffer, headers) {
+            if (err) return callback(err);
+            var renderTime = Date.now() - renderStart;
+            callback(null, {
+                mapFromString: mapFromStringTime,
+                renderTime: renderTime
+            });
+        });
+    }.bind(this));
+};
+
+function tm2z(uri, callback) {
+    var maxsize = {
+        file: uri.filesize || 750 * 1024,
+        gunzip: uri.gunzipsize || 5 * 1024 * 1024,
+        xml: uri.xmlsize || 750 * 1024
+    };
+
+    var id = url.format(uri);
+
+    // Cache hit.
+    if (tm2z.sources[id]) {
+        tm2z.sources[id].access = +new Date;
+        return tm2z.sources[id].open(callback);
+    }
+
+    var xml;
+    var base = '/tmp/' + md5(id).substr(0,8) + '-' + path.basename(id);
+    var parser = tar.Parse();
+    var gunzip = zlib.Gunzip();
+    var unpacked = false;
+
+    var once = 0;
+    var error = function(err) { if (!once++) callback(err); };
+
+    // Check for unpacked manifest
+    exists(base + '/.unpacked', function(exists) {
+        unpacked = exists;
+        if (unpacked) {
+            unpack();
+        } else {
+            fs.mkdir(base, function(err) {
+                if (err && err.code !== 'EEXIST') return callback(err);
+                unpack();
+            });
+        }
+    });
+
+    function unpack() {
+        var stream;
+        var size = {
+            file: 0,
+            gunzip: 0,
+            xml: 0
+        };
+        var todo = [];
+
+        function chunked(chunk) {
+            size.file += chunk.length;
+            if (size.file > maxsize.file) {
+                var err = new RangeError('Upload size should not exceed ' + numeral(maxsize.file).format('0b') + '.');
+                stream.emit('error', err);
+            }
+        }
+
+        gunzip.on('data', function(chunk) {
+            size.gunzip += chunk.length;
+            if (size.gunzip > maxsize.gunzip) {
+                var err = new RangeError('Unzipped size should not exceed ' + numeral(maxsize.gunzip).format('0b') + '.');
+                gunzip.emit('error', err);
+            }
+        });
+        parser.on('entry', function(entry) {
+            var parts = [];
+            var filepath = entry.props.path.split('/').slice(1).join('/');
+            entry.on('data', function(chunk) {
+                if (path.basename(filepath).toLowerCase() == 'project.xml') {
+                    size.xml += chunk.length;
+                    if (size.xml > maxsize.xml) {
+                        var err = new RangeError('Unzipped project.xml size should not exceed ' + numeral(maxsize.xml).format('0b') + '.');
+                        parser.emit('error', err);
+                    }
+                }
+                parts.push(chunk);
+            });
+            entry.on('end', function() {
+                var buffer = Buffer.concat(parts);
+                if (path.basename(filepath).toLowerCase() == 'project.xml') {
+                    xml = buffer.toString();
+                    if (unpacked) return load();
+                } else if (!unpacked && entry.type === 'Directory') {
+                    todo.push(function(next) { fs.mkdir(base + '/' + filepath, next); });
+                } else if (!unpacked && entry.type === 'File') {
+                    todo.push(function(next) { fs.writeFile(base + '/' + filepath, buffer, next); });
+                }
+            });
+        });
+        parser.on('end', function() {
+            // Load was called early via parser. Do nothing.
+            if (unpacked && xml) return;
+
+            // Package unpacked but no project.xml. Call load to error our.
+            if (unpacked) return load();
+
+            todo.push(function(next) { fs.writeFile(base + '/.unpacked', '', next); });
+            var next = function(err) {
+                if (err && err.code !== 'EEXIST') return callback(err);
+                if (todo.length) {
+                    todo.shift()(next);
+                } else {
+                    unpacked = true;
+                    load();
+                }
+            };
+            next();
+        });
+        gunzip.on('error', error);
+        parser.on('error', error);
+
+        switch(uri.protocol) {
+            case 'tm2z:':
+                // The uri from unpacker has already been pulled
+                // down from S3.
+                stream = fs.createReadStream(uri.pathname)
+                    .on('data', chunked)
+                    .pipe(gunzip)
+                    .pipe(parser)
+                    .on('error', error);
+                break;
+            case 'tm2z+http:':
+                uri.protocol = 'http:';
+                stream = request({ uri: uri })
+                    .on('data', chunked)
+                    .pipe(gunzip)
+                    .pipe(parser)
+                    .on('error', error);
+                break;
+        }
+    };
+
+    function load() {
+        if (!xml) return callback(new Error('project.xml not found in package'));
+        tm2z.sources[id] = new Vector({
+            source: 'mapbox:///mapbox.mapbox-streets-v2',
+            base: base,
+            xml: xml
+        });
+        tm2z.sources[id].open(function(err, source) {
+            if (err) {
+                delete tm2z.sources[id];
+                return callback(err);
+            }
+            source.mtime = new Date(source._backend.data.mtime);
+            source.access = +new Date;
+            callback(null, source);
+        });
+    };
+};
+tm2z.sources = {};
+
+tm2z.findID = function(source, id, callback) {
+    callback(new Error('id not found'));
+};
