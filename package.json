@@ -22,6 +22,8 @@
   },
   "devDependencies": {
     "mocha": "1.3.x",
+    "gm": "~1.14.0",
+    "mkdirp": "~0.3.5",
     "tilejson": "~0.6.0"
   },
   "scripts": {
