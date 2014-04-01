@@ -32,6 +32,17 @@ function Vector(uri, callback) {
     this._deflate = typeof uri.deflate === 'boolean' ? uri.deflate : true;
     this._base = path.resolve(uri.base || __dirname);
 
+    if ("scaleMatchesZoom" in uri) {
+        if (uri.scaleMatchesZoom === true ||
+            uri.scaleMatchesZoom === "true") {
+            this._scaleMatchesZoom = true;
+        } else {
+            this._scaleMatchesZoom = false;
+        }
+    } else {
+        this._scaleMatchesZoom = true;
+    }
+
     if (callback) this.once('open', callback);
 
     var s = this;
@@ -86,7 +97,8 @@ Vector.prototype.update = function(opts, callback) {
             new Backend({
                 uri: source,
                 scale: s._scale,
-                deflate: s._uri.deflate
+                deflate: s._uri.deflate,
+                scaleMatchesZoom: s._scaleMatchesZoom
             }, function(err, backend) {
                 if (err) return callback(err);
                 s._source = map.parameters.source || opts.source;

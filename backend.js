@@ -9,6 +9,7 @@ module.exports = Backend;
 function Backend(opts, callback) {
     this._scale = opts.scale || 1;
     this._deflate = typeof opts.deflate === 'boolean' ? opts.deflate : true;
+    this._scaleMatchesZoom = 'scaleMatchesZoom' in opts ? opts.scaleMatchesZoom : true;
     this._source = null;
     var backend = this;
 
@@ -55,12 +56,18 @@ Backend.prototype.getTile = function(z, x, y, callback) {
     var scale = callback.scale || backend._scale;
     var now = +new Date;
 
-    // If scale > 1 adjusts source data zoom level inversely.
-    // scale 2x => z-1, scale 4x => z-2, scale 8x => z-3, etc.
-    var d = Math.round(Math.log(scale)/Math.log(2));
-    var bz = (z - d) > backend._minzoom ? z - d : backend._minzoom;
-    var bx = Math.floor(x / Math.pow(2, z - bz));
-    var by = Math.floor(y / Math.pow(2, z - bz));
+    var bz = z,
+        bx = x,
+        by = y;
+
+    if (backend._scaleMatchesZoom) {
+        // If scale > 1 adjusts source data zoom level inversely.
+        // scale 2x => z-1, scale 4x => z-2, scale 8x => z-3, etc.
+        var d = Math.round(Math.log(scale)/Math.log(2));
+        bz = (z - d) > backend._minzoom ? z - d : backend._minzoom;
+        bx = Math.floor(x / Math.pow(2, z - bz));
+        by = Math.floor(y / Math.pow(2, z - bz));
+    }
 
     // Overzooming support.
     if (bz > backend._maxzoom) {
