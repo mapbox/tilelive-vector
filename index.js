@@ -261,7 +261,7 @@ Vector.prototype.profile = function(callback) {
 
                 var center = (info.center || backend_info.center).slice(0);
                 var minzoom = info.minzoom || backend_info.minzoom || 0;
-                var maxzoom = info.maxzoom || backend_info.maxzoom || 22;
+                var maxzoom = info.maxzoom || backend_info.maxzoom || 26;
 
                 // wrapx lon value.
                 center[0] = ((((center[0]+180)%360)+360)%360) - 180;
