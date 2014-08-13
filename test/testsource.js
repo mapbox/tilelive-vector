@@ -1,5 +1,4 @@
 var tilelive = require('tilelive');
-var zlib = require('zlib');
 var fs = require('fs');
 var path = require('path');
 
@@ -22,7 +21,8 @@ var infos = {
                     "ScaleRank": "Number"
                 }
             }
-        ]
+        ],
+        'Content-Type': 'application/x-protobuf'
     },
     b: {
         minzoom:0,
@@ -40,12 +40,14 @@ var infos = {
                     "ScaleRank": "Number"
                 }
             }
-        ]
+        ],
+        'Content-Type': 'application/x-protobuf'
     },
     i: {
         minzoom:0,
         maxzoom:1,
-        vector_layers: []
+        vector_layers: [],
+        'Content-Type': 'image/jpeg'
     },
     'invalid-novector': {
         minzoom:0,
@@ -71,15 +73,8 @@ var tiles = {
 };
 
 // Additional error tile fixtures.
-zlib.deflate(new Buffer('asdf'), function(err, deflated) {
-    if (err) throw err;
-    tiles.a['1.0.2'] = new Buffer('asdf'); // invalid deflate
-    tiles.a['1.0.3'] = deflated;           // invalid protobuf
-});
-zlib.deflate(new Buffer(0), function(err, deflated) {
-    if (err) throw err;
-    tiles.a['0.0.1'] = deflated;
-});
+tiles.a['1.0.3'] = new Buffer('asdf'); // invalid protobuf
+tiles.a['0.0.1'] = new Buffer(0); // empty protobuf
 
 Testsource.now = new Date;
 
@@ -107,8 +102,8 @@ Testsource.prototype.getTile = function(z,x,y,callback) {
     // Headers.
     var headers = {
         'Last-Modified': Testsource.now.toUTCString(),
-        'ETag':'73f12a518adef759138c142865287a18',
-        'Content-Type':'application/x-protobuf'
+        'ETag': '73f12a518adef759138c142865287a18',
+        'Content-Type': infos[this.uri]['Content-Type']
     };
 
     if (!tiles[this.uri][key]) {

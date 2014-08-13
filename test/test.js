@@ -1,7 +1,6 @@
 var test = require('tape');
 var tilelive = require('tilelive');
 var url = require('url');
-var zlib = require('zlib');
 var Vector = require('..');
 var path = require('path');
 var fs = require('fs');
@@ -245,12 +244,6 @@ test('query', function(t) {
             JSON.parse(JSON.stringify(data)),
             JSON.parse(fs.readFileSync(filepath, 'utf8'))
         );
-        t.end();
-    });
-});
-test('errors out on bad deflate', function(t) {
-    sources.a.getTile(1, 0, 2, function(err) {
-        t.ifError(err);
         t.end();
     });
 });
