@@ -14,7 +14,6 @@
   ],
   "dependencies": {
     "mapnik": "~1.4.10",
-    "tiletype": "0.0.x",
     "tilelive": "5.0.x",
     "tar": "~0.1.18",
     "request": "~2.27.0",
@@ -25,7 +24,7 @@
   },
   "devDependencies": {
     "tape": "2.13.x",
-    "tilejson": "~0.6.0",
+    "tilejson": "git+https://github.com/mapbox/node-tilejson.git#content-encoding",
     "simple-statistics": "~0.8.0"
   },
   "scripts": {
