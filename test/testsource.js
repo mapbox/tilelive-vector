@@ -73,7 +73,7 @@ var tiles = {
 };
 
 // Additional error tile fixtures.
-tiles.a['1.0.3'] = new Buffer('asdf'); // invalid protobuf
+tiles.a['1.0.3'] = tiles.a['0.0.0'].slice(0,50); // invalid protobuf
 tiles.a['0.0.1'] = new Buffer(0); // empty protobuf
 
 Testsource.now = new Date;
