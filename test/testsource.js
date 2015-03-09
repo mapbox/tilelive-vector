@@ -67,7 +67,16 @@ var infos = {
                 }
             }
         ]
-    }
+    },
+    tif: {
+        minzoom:0,
+        maxzoom:0,
+        vector_layers: []
+    },
+    'invalid-novector': {
+        minzoom:0,
+        maxzoom:0
+    },
 };
 var tiles = {
     a: fs.readdirSync(path.resolve(path.join(__dirname, 'fixtures','a'))).reduce(function(memo, basename) {
@@ -88,6 +97,11 @@ var tiles = {
     gz: fs.readdirSync(path.resolve(path.join(__dirname, 'fixtures','gz'))).reduce(function(memo, basename) {
         var key = basename.split('.').slice(0,3).join('.');
         memo[key] = fs.readFileSync(path.resolve(path.join(__dirname, 'fixtures', 'gz', basename)));
+        return memo;
+    }, {}),
+    tif: fs.readdirSync(path.resolve(path.join(__dirname, 'fixtures','tif'))).reduce(function(memo, basename) {
+        var key = basename.split('.').slice(0,3).join('.');
+        memo[key] = fs.readFileSync(path.resolve(path.join(__dirname, 'fixtures', 'tif', basename)));
         return memo;
     }, {})
 };

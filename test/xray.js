@@ -67,6 +67,22 @@ test('loads raster source', function(t) {
         });
     });
 });
+test('loads tif sources', function(t) {
+    new xray({uri:'test:///tif'}, function(err, source) {
+        t.ifError(err);
+        t.ok(!!source);
+        source.getTile(0,0,0, function(err,buffer) {
+            t.ifError(err);
+            if (UPDATE) {
+                // fs.writeFileSync(__dirname + '/expected/xray-i-0-0-0.png', buffer);
+            }
+            imageEqualsFile(buffer, __dirname + '/expected/xray-i-0-0-0.png', function(err, data) {
+                t.ifError(err);
+                t.end();
+            });
+        });
+    });
+});
 test('color', function(t) {
     var results = {
         '': [68,68,68],
