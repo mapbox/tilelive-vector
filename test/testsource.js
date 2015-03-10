@@ -68,7 +68,27 @@ var infos = {
             }
         ]
     },
-    tif: {
+    tif_float64: {
+        minzoom:0,
+        maxzoom:0,
+        vector_layers: []
+    },
+    tif_float32: {
+        minzoom:0,
+        maxzoom:0,
+        vector_layers: []
+    },
+    tif_uint16: {
+        minzoom:0,
+        maxzoom:0,
+        vector_layers: []
+    },
+    tif_uint8: {
+        minzoom:0,
+        maxzoom:0,
+        vector_layers: []
+    },
+    tif_int16: {
         minzoom:0,
         maxzoom:0,
         vector_layers: []
@@ -99,11 +119,31 @@ var tiles = {
         memo[key] = fs.readFileSync(path.resolve(path.join(__dirname, 'fixtures', 'gz', basename)));
         return memo;
     }, {}),
-    tif: fs.readdirSync(path.resolve(path.join(__dirname, 'fixtures','tif'))).reduce(function(memo, basename) {
+    tif_float64: fs.readdirSync(path.resolve(path.join(__dirname, 'fixtures','tif_float64'))).reduce(function(memo, basename) {
         var key = basename.split('.').slice(0,3).join('.');
-        memo[key] = fs.readFileSync(path.resolve(path.join(__dirname, 'fixtures', 'tif', basename)));
+        memo[key] = fs.readFileSync(path.resolve(path.join(__dirname, 'fixtures', 'tif_float64', basename)));
         return memo;
-    }, {})
+    }, {}),
+    tif_float32: fs.readdirSync(path.resolve(path.join(__dirname, 'fixtures','tif_float32'))).reduce(function(memo, basename) {
+        var key = basename.split('.').slice(0,3).join('.');
+        memo[key] = fs.readFileSync(path.resolve(path.join(__dirname, 'fixtures', 'tif_float32', basename)));
+        return memo;
+    }, {}),
+    tif_uint16: fs.readdirSync(path.resolve(path.join(__dirname, 'fixtures','tif_uint16'))).reduce(function(memo, basename) {
+        var key = basename.split('.').slice(0,3).join('.');
+        memo[key] = fs.readFileSync(path.resolve(path.join(__dirname, 'fixtures', 'tif_uint16', basename)));
+        return memo;
+    }, {}),
+    tif_uint8: fs.readdirSync(path.resolve(path.join(__dirname, 'fixtures','tif'))).reduce(function(memo, basename) {
+        var key = basename.split('.').slice(0,3).join('.');
+        memo[key] = fs.readFileSync(path.resolve(path.join(__dirname, 'fixtures', 'tif_uint8', basename)));
+        return memo;
+    }, {}),
+    tif_int16: fs.readdirSync(path.resolve(path.join(__dirname, 'fixtures','tif_int16'))).reduce(function(memo, basename) {
+        var key = basename.split('.').slice(0,3).join('.');
+        memo[key] = fs.readFileSync(path.resolve(path.join(__dirname, 'fixtures', 'tif_int16', basename)));
+        return memo;
+    }, {}),
 };
 
 // Additional error tile fixtures.

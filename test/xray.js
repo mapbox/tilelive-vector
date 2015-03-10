@@ -67,14 +67,78 @@ test('loads raster source', function(t) {
         });
     });
 });
-test('loads tif sources', function(t) {
-    new xray({uri:'test:///tif'}, function(err, source) {
+test('loads float64 tif sources', function(t) {
+    new xray({uri:'test:///tif_float64'}, function(err, source) {
         t.ifError(err);
         t.ok(!!source);
         source.getTile(0,0,0, function(err,buffer) {
             t.ifError(err);
             if (UPDATE) {
-                // fs.writeFileSync(__dirname + '/expected/xray-i-0-0-0.png', buffer);
+                fs.writeFileSync(__dirname + '/expected/xray-float64-0-0-0.png', buffer);
+            }
+            imageEqualsFile(buffer, __dirname + '/expected/xray-i-0-0-0.png', function(err, data) {
+                t.ifError(err);
+                t.end();
+            });
+        });
+    });
+});
+test('loads float32 tif sources', function(t) {
+    new xray({uri:'test:///tif_float32'}, function(err, source) {
+        t.ifError(err);
+        t.ok(!!source);
+        source.getTile(0,0,0, function(err,buffer) {
+            t.ifError(err);
+            if (UPDATE) {
+                fs.writeFileSync(__dirname + '/expected/xray-float32-0-0-0.png', buffer);
+            }
+            imageEqualsFile(buffer, __dirname + '/expected/xray-i-0-0-0.png', function(err, data) {
+                t.ifError(err);
+                t.end();
+            });
+        });
+    });
+});
+test('loads uint16 tif sources', function(t) {
+    new xray({uri:'test:///tif_uint16'}, function(err, source) {
+        t.ifError(err);
+        t.ok(!!source);
+        source.getTile(0,0,0, function(err,buffer) {
+            t.ifError(err);
+            if (UPDATE) {
+                fs.writeFileSync(__dirname + '/expected/xray-uint16-0-0-0.png', buffer);
+            }
+            imageEqualsFile(buffer, __dirname + '/expected/xray-i-0-0-0.png', function(err, data) {
+                t.ifError(err);
+                t.end();
+            });
+        });
+    });
+});
+test('loads uint8 tif sources', function(t) {
+    new xray({uri:'test:///tif_uint8'}, function(err, source) {
+        t.ifError(err);
+        t.ok(!!source);
+        source.getTile(0,0,0, function(err,buffer) {
+            t.ifError(err);
+            if (UPDATE) {
+                fs.writeFileSync(__dirname + '/expected/xray-uint8-0-0-0.png', buffer);
+            }
+            imageEqualsFile(buffer, __dirname + '/expected/xray-i-0-0-0.png', function(err, data) {
+                t.ifError(err);
+                t.end();
+            });
+        });
+    });
+});
+test('loads int16 tif sources', function(t) {
+    new xray({uri:'test:///tif_int16'}, function(err, source) {
+        t.ifError(err);
+        t.ok(!!source);
+        source.getTile(0,0,0, function(err,buffer) {
+            t.ifError(err);
+            if (UPDATE) {
+                fs.writeFileSync(__dirname + '/expected/xray-int16-0-0-0.png', buffer);
             }
             imageEqualsFile(buffer, __dirname + '/expected/xray-i-0-0-0.png', function(err, data) {
                 t.ifError(err);
