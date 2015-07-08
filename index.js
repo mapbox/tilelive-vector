@@ -183,6 +183,7 @@ Vector.prototype.getTile = function(z, x, y, callback) {
         } else {
             var surface = new mapnik.Image(width,height);
         }
+        opts.variables = { zoom: z };
         vtile.render(source._map, surface, opts, function(err, image) {
             if (err) {
                 err.code = 'EMAPNIK';
