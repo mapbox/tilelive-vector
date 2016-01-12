@@ -83,6 +83,22 @@ test('loads raster source', function(t) {
         });
     });
 });
+test('loads raster source with fillzoom', function(t) {
+    new xray({uri:'test:///fillzoom'}, function(err, source) {
+        t.ifError(err);
+        t.ok(!!source);
+        source.getTile(2,1,1, function(err,buffer) {
+            t.ifError(err);
+            if (UPDATE) {
+                fs.writeFileSync(__dirname + '/expected/xray-fillzoom-2-1-1.jpg', buffer);
+            }
+            imageEqualsFile(buffer, __dirname + '/expected/xray-fillzoom-2-1-1.jpg', function(err) {
+                t.ifError(err);
+                t.end();
+            });
+        });
+    });
+});
 test('color', function(t) {
     var results = {
         '': [68,68,68],

@@ -84,6 +84,12 @@ var infos = {
                 }
             }
         ]
+    },
+    fillzoom: {
+        minzoom:0,
+        maxzoom:2,
+        fillzoom:1,
+        vector_layers: []
     }
 };
 var tiles = {
@@ -110,6 +116,11 @@ var tiles = {
     expires: fs.readdirSync(path.resolve(path.join(__dirname, 'fixtures','a'))).reduce(function(memo, basename) {
         var key = basename.split('.').slice(0,3).join('.');
         memo[key] = fs.readFileSync(path.resolve(path.join(__dirname, 'fixtures', 'a', basename)));
+        return memo;
+    }, {}),
+    fillzoom: fs.readdirSync(path.resolve(path.join(__dirname, 'fixtures','i'))).reduce(function(memo, basename) {
+        var key = basename.split('.').slice(0,3).join('.');
+        memo[key] = fs.readFileSync(path.resolve(path.join(__dirname, 'fixtures', 'i', basename)));
         return memo;
     }, {}),
 };
