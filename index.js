@@ -80,7 +80,7 @@ Vector.prototype.open = function(callback) {
 };
 
 Vector.prototype.close = function(callback) {
-    return callback();
+    return this._backend.close(callback);
 };
 
 // Allows in-place update of XML/backends.

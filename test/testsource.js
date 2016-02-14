@@ -138,6 +138,7 @@ function Testsource(uri, callback) {
         vector_layers: infos[uri].vector_layers
     };
     this.stats = {};
+    this.closeCalled = false;
     return callback && callback(null, this);
 };
 
@@ -167,4 +168,9 @@ Testsource.prototype.getTile = function(z,x,y,callback) {
 
 Testsource.prototype.getInfo = function(callback) {
     return callback(null, this.data);
+};
+
+Testsource.prototype.close = function(callback) {
+    this.closeCalled = true;
+    return callback(null);
 };
