@@ -1,6 +1,6 @@
 {
   "name": "tilelive-vector",
-  "version": "3.6.0",
+  "version": "3.7.1",
   "main": "./index.js",
   "description": "Vector tile => raster tile backend for tilelive",
   "repository": {
@@ -13,14 +13,16 @@
     }
   ],
   "dependencies": {
+    "aws-sdk": "^2.2.30",
+    "s3urls": "^1.3.0",
     "mapnik": "~3.4.6",
-    "tilelive": "5.11.x",
+    "tilelive": "5.x",
     "tiletype": "0.3.x",
     "tar": "~2.2.1",
     "request": "~2.65.0",
     "numeral": "~1.5.3",
     "sphericalmercator": "~1.0.2",
-    "spherical": "0.0.1",
+    "spherical": "~0.1.0",
     "underscore": "~1.8.0"
   },
   "devDependencies": {
