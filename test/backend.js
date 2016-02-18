@@ -168,6 +168,15 @@ tilelive.protocols['test:'] = Testsource;
             });
         });
     });
+    test('close is called on source', function(t) {
+        var testsource = new Testsource('a');
+        new Backend({ source:testsource }, function(err, backend) {
+            backend.close(function(err) {
+                t.equal(testsource.closeCalled, true);
+                t.end();
+            });
+        });
+    });
 
 function replacer(key, value) {
     if (key === 'raster') {

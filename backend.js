@@ -164,3 +164,12 @@ Backend.prototype.getTile = function(z, x, y, callback) {
     };
 };
 
+Backend.prototype.close = function(callback) {
+    if (!this._source) return callback(new Error('Tilesource not loaded'));
+
+    if (typeof this._source.close === 'function') {
+        return this._source.close(callback);
+    }
+
+    return callback(null);
+};

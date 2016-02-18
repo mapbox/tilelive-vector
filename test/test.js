@@ -301,3 +301,11 @@ test('diff scale => diff ETags', function(t) {
     t.end();
 });
 
+test('source should be closed', function(t) {
+    new Vector({ source:'test:///a', xml: xml.a }, function(err, source) {
+        source.close(function(err) {
+            t.equal(source._backend._source.closeCalled, true);
+            t.end();
+        });
+    });
+});
