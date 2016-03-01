@@ -17,7 +17,7 @@
 
 <Style name="%s-raster" filter-mode="first">
   <Rule>
-    <RasterSymbolizer opacity="1" />
+    <RasterSymbolizer opacity="1" scaling="bilinear" />
   </Rule>
 </Style>
 
