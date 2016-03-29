@@ -141,6 +141,7 @@ var tests = {
     i: ['0.0.0', '1.0.0'],
     // Image sources.
     'i@2x': ['0.0.0', '1.0.0'],
+    l: ['0.0.0', '1.0.1', '2.1.1'],
     // Invalid tiles that are empty
     invalid: ['1.1.0', '1.1.1'],
 
