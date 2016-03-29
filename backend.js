@@ -35,6 +35,9 @@ function Backend(opts, callback) {
         backend._fillzoom = 'fillzoom' in info && !isNaN(parseInt(info.fillzoom, 10)) ?
             parseInt(info.fillzoom, 10) :
             undefined;
+        backend._lookback = 'lookback' in info && !isNaN(parseInt(info.lookback, 10)) ?
+            parseInt(info.lookback, 10) :
+            undefined;
         backend._source = source;
         if (callback) callback(null, backend);
     }
@@ -72,6 +75,7 @@ Backend.prototype.getTile = function(z, x, y, callback) {
 
     var size = 0;
     var headers = {};
+    var lookbacks = 0;
 
     // Overzooming support.
     if (bz > backend._maxzoom) {
@@ -86,6 +90,14 @@ Backend.prototype.getTile = function(z, x, y, callback) {
             err && err.message === 'Tile does not exist' &&
             bz > backend._fillzoom) {
             bz = backend._fillzoom;
+            bx = Math.floor(x / Math.pow(2, z - bz));
+            by = Math.floor(y / Math.pow(2, z - bz));
+            headers['x-vector-backend-object'] = 'fillzoom';
+            return source.getTile(bz, bx, by, sourceGet);
+        } else if (typeof backend._lookback === 'number' &&
+            err && err.message === 'Tile does not exist' &&
+            lookbacks <= backend._lookback) {
+            bz = bz - 1;
             bx = Math.floor(x / Math.pow(2, z - bz));
             by = Math.floor(y / Math.pow(2, z - bz));
             headers['x-vector-backend-object'] = 'fillzoom';

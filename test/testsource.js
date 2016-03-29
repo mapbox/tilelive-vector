@@ -47,6 +47,12 @@ var infos = {
         maxzoom:1,
         vector_layers: []
     },
+    l: {
+        minzoom:0,
+        maxzoom:4,
+        lookback:3,
+        vector_layers: []
+    },
     'invalid-novector': {
         minzoom:0,
         maxzoom:1
@@ -116,6 +122,11 @@ Testsource.tiles = {
         return memo;
     }, {}),
     i: fs.readdirSync(path.resolve(path.join(__dirname, 'fixtures','i'))).reduce(function(memo, basename) {
+        var key = basename.split('.').slice(0,3).join('.');
+        memo[key] = fs.readFileSync(path.resolve(path.join(__dirname, 'fixtures', 'i', basename)));
+        return memo;
+    }, {}),
+    l: fs.readdirSync(path.resolve(path.join(__dirname, 'fixtures','i'))).reduce(function(memo, basename) {
         var key = basename.split('.').slice(0,3).join('.');
         memo[key] = fs.readFileSync(path.resolve(path.join(__dirname, 'fixtures', 'i', basename)));
         return memo;
