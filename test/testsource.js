@@ -160,6 +160,7 @@ function Testsource(uri, callback) {
         minzoom: infos[uri].minzoom,
         maxzoom: infos[uri].maxzoom,
         fillzoom: infos[uri].fillzoom,
+        lookback: infos[uri].lookback,
         vector_layers: infos[uri].vector_layers
     };
     this.stats = {};

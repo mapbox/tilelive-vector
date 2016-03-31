@@ -97,6 +97,7 @@ Backend.prototype.getTile = function(z, x, y, callback) {
         } else if (typeof backend._lookback === 'number' &&
             err && err.message === 'Tile does not exist' &&
             lookbacks <= backend._lookback) {
+            lookbacks += 1
             bz = bz - 1;
             bx = Math.floor(x / Math.pow(2, z - bz));
             by = Math.floor(y / Math.pow(2, z - bz));

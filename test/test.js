@@ -17,6 +17,7 @@ var xml = {
     b: fs.readFileSync(path.resolve(__dirname + '/fixtures/b.xml'), 'utf8'),
     c: fs.readFileSync(path.resolve(__dirname + '/fixtures/c.xml'), 'utf8'),
     i: fs.readFileSync(path.resolve(__dirname + '/fixtures/i.xml'), 'utf8'),
+    l: fs.readFileSync(path.resolve(__dirname + '/fixtures/l.xml'), 'utf8'),
     space: fs.readFileSync(path.resolve(__dirname + '/fixtures/s p a c e/i.xml'), 'utf8'),
     expires: fs.readFileSync(path.resolve(__dirname + '/fixtures/expires.xml'), 'utf8'),
     invalid: fs.readFileSync(path.resolve(__dirname + '/fixtures/invalid.xml'), 'utf8')
@@ -116,6 +117,7 @@ var sources = {
     h: new Vector({ backend: new Testsource('b'), xml: xml.b, scale: 2 }),
     i: new Vector({ backend: new Testsource('i'), xml: xml.i }),
     'i@2x': new Vector({ backend: new Testsource('i'), xml: xml.i }),
+    l: new Vector({ backend: new Testsource('l'), xml: xml.l}),
     invalid: new Vector({ backend: new Testsource('invalid'), xml: xml.invalid })
 };
 var tests = {
@@ -141,7 +143,8 @@ var tests = {
     i: ['0.0.0', '1.0.0'],
     // Image sources.
     'i@2x': ['0.0.0', '1.0.0'],
-    l: ['0.0.0', '1.0.1', '2.1.1'],
+    // Image sources for multiple lookback
+    l: ['0.0.0', '1.0.0', '1.1.1', '2.0.0', '2.3.3'],
     // Invalid tiles that are empty
     invalid: ['1.1.0', '1.1.1'],
 
