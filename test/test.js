@@ -144,7 +144,7 @@ var tests = {
     // Image sources.
     'i@2x': ['0.0.0', '1.0.0'],
     // Image sources for multiple lookback
-    l: ['0.0.0', '1.0.0', '1.1.1', '2.0.0', '2.3.3'],
+    l: ['0.0.0', '1.0.0', '1.1.1', '2.0.0', '2.3.3', '3.1.1'],
     // Invalid tiles that are empty
     invalid: ['1.1.0', '1.1.1'],
 
