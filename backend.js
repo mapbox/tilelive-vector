@@ -117,16 +117,16 @@ Backend.prototype.getTile = function(z, x, y, callback) {
             for (var lb = 1; lb <=  Math.min(backend._lookback, z); lb++) {
                 q.defer(loadAsync, bz - lb, Math.floor(x / Math.pow(2, lb)), Math.floor(y / Math.pow(2, lb)));
             }
-            return q.awaitAll(function(err, data) {
+            return q.awaitAll(function(err, lookbackTiles) {
                 if (err) return callback(err);
-                data = data.filter(function(d, i) {
-                    return d === null || i === data.length - 1;
+                lookbackTiles = lookbackTiles.filter(function(t, i) {
+                    return t === null || i === lookbackTiles.length - 1;
                 });
                 headers['x-vector-backend-object'] = 'fillzoom';
-                bz = data[0].z;
-                bx = data[0].x;
-                by = data[0].y;
-                sourceGet(data[0].err, data[0].body, data[0].head);
+                bz = lookbackTiles[0].z;
+                bx = lookbackTiles[0].x;
+                by = lookbackTiles[0].y;
+                sourceGet(lookbackTiles[0].err, lookbackTiles[0].body, lookbackTiles[0].head);
             });
         }
         if (err && err.message !== 'Tile does not exist') return callback(err);
