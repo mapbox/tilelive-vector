@@ -126,9 +126,9 @@ Testsource.tiles = {
         memo[key] = fs.readFileSync(path.resolve(path.join(__dirname, 'fixtures', 'i', basename)));
         return memo;
     }, {}),
-    l: fs.readdirSync(path.resolve(path.join(__dirname, 'fixtures','i'))).reduce(function(memo, basename) {
+    l: fs.readdirSync(path.resolve(path.join(__dirname, 'fixtures','l'))).reduce(function(memo, basename) {
         var key = basename.split('.').slice(0,3).join('.');
-        memo[key] = fs.readFileSync(path.resolve(path.join(__dirname, 'fixtures', 'i', basename)));
+        memo[key] = fs.readFileSync(path.resolve(path.join(__dirname, 'fixtures', 'l', basename)));
         return memo;
     }, {}),
     gz: fs.readdirSync(path.resolve(path.join(__dirname, 'fixtures','gz'))).reduce(function(memo, basename) {
