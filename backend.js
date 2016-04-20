@@ -3,6 +3,7 @@ var crypto = require('crypto');
 var mapnik = require('mapnik');
 var util = require('util');
 var sm = new (require('sphericalmercator'))();
+var queue = require('d3-queue');
 
 module.exports = Backend;
 
@@ -34,6 +35,9 @@ function Backend(opts, callback) {
             '_image';
         backend._fillzoom = 'fillzoom' in info && !isNaN(parseInt(info.fillzoom, 10)) ?
             parseInt(info.fillzoom, 10) :
+            undefined;
+        backend._lookback = 'lookback' in info && !isNaN(parseInt(info.lookback, 10)) ?
+            parseInt(info.lookback, 10) :
             undefined;
         backend._source = source;
         if (callback) callback(null, backend);
@@ -72,6 +76,7 @@ Backend.prototype.getTile = function(z, x, y, callback) {
 
     var size = 0;
     var headers = {};
+    var lookbacks = true;
 
     // Overzooming support.
     if (bz > backend._maxzoom) {
@@ -79,6 +84,20 @@ Backend.prototype.getTile = function(z, x, y, callback) {
         bx = Math.floor(x / Math.pow(2, z - bz));
         by = Math.floor(y / Math.pow(2, z - bz));
         headers['x-vector-backend-object'] = 'overzoom';
+    }
+
+    function loadAsync(lz, lx, ly, callback) {
+        source.getTile(lz, lx, ly, function (err, body, head) {
+            if (err && err.message !== 'Tile does not exist') return callback(err);
+            return callback(null, {
+                err: err,
+                body: body,
+                head: head,
+                z: lz,
+                x: lx,
+                y: ly
+            });
+        });
     }
 
     source.getTile(bz, bx, by, function sourceGet(err, body, head) {
@@ -90,6 +109,25 @@ Backend.prototype.getTile = function(z, x, y, callback) {
             by = Math.floor(y / Math.pow(2, z - bz));
             headers['x-vector-backend-object'] = 'fillzoom';
             return source.getTile(bz, bx, by, sourceGet);
+        } else if (typeof backend._lookback === 'number' &&
+            err && err.message === 'Tile does not exist' &&
+            lookbacks === true) {
+            lookbacks = false;
+            var q = new queue.queue();
+            for (var lb = 1; lb <=  Math.min(backend._lookback, z); lb++) {
+                q.defer(loadAsync, bz - lb, Math.floor(x / Math.pow(2, lb)), Math.floor(y / Math.pow(2, lb)));
+            }
+            return q.awaitAll(function(err, lookbackTiles) {
+                if (err) return callback(err);
+                lookbackTiles = lookbackTiles.filter(function(t, i) {
+                    return t === null || i === lookbackTiles.length - 1;
+                });
+                headers['x-vector-backend-object'] = 'fillzoom';
+                bz = lookbackTiles[0].z;
+                bx = lookbackTiles[0].x;
+                by = lookbackTiles[0].y;
+                sourceGet(lookbackTiles[0].err, lookbackTiles[0].body, lookbackTiles[0].head);
+            });
         }
         if (err && err.message !== 'Tile does not exist') return callback(err);
 

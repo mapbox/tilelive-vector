@@ -70,6 +70,7 @@ tilelive.protocols['test:'] = Testsource;
         c: new Backend({ source: new Testsource('b'), minzoom:0, maxzoom: 2, fillzoom: 1, scale: 2, legacy: true }),
         h: new Backend({ source: new Testsource('b'), minzoom:0, maxzoom: 2, fillzoom: 1, scale: 2 }),
         i: new Backend({ source: new Testsource('i'), minzoom:0, maxzoom: 1 }),
+        l: new Backend({ source: new Testsource('i'), minzoom:0, maxzoom: 4, lookback: 3}),
         invalid: new Backend({ source: new Testsource('invalid'), minzoom:0, maxzoom: 1 }),
         iv: new Backend({ source: new Testsource('i'), minzoom:0, maxzoom: 1, vector_layers: [{id:'custom_layer_name'}] }),
         gz: new Backend({ source: new Testsource('gz'), minzoom:0, maxzoom: 0 }),
@@ -90,6 +91,8 @@ tilelive.protocols['test:'] = Testsource;
         h: ['0.0.0', '1.0.0', '1.0.1', '1.1.0', '1.1.1', '2.1.1', '2.1.2', '3.2.2', '3.2.3', '3.2.4'],
         // wraps image source with vector tiles.
         i: ['0.0.0', '1.0.0', '1.0.1', '1.1.0', '1.1.1', '2.0.0', '2.0.1'],
+        // test for multiple lookback
+        l: ['0.0.0', '1.0.0', '1.0.1', '1.1.0', '1.1.1', '2.0.0'],
         // wraps image source with vector tiles, with named vector layer.
         iv: ['0.0.0'],
         // loads gzip compressed protobuf.
