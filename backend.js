@@ -86,11 +86,6 @@ Backend.prototype.getTile = function(z, x, y, callback) {
         headers['x-vector-backend-object'] = 'overzoom';
     }
 
-    function testAsync(callback) {
-        // do nothing
-        return callback();
-    }
-
     function loadAsync(lz, lx, ly, callback) {
         source.getTile(lz, lx, ly, function (err, body, head) {
             if (err && err.message !== 'Tile does not exist') return callback(err);
@@ -105,13 +100,7 @@ Backend.prototype.getTile = function(z, x, y, callback) {
         });
     }
 
-    function loadMultipleWrapper(err, body, head, callback) {
-        return callback(err, body, head)
-    }
-
-    source.getTile(bz, bx, by, sourceGet);
-
-    function sourceGet(err, body, head) {
+    source.getTile(bz, bx, by, function sourceGet(err, body, head) {
         if (typeof backend._fillzoom === 'number' &&
             err && err.message === 'Tile does not exist' &&
             bz > backend._fillzoom) {
@@ -123,25 +112,22 @@ Backend.prototype.getTile = function(z, x, y, callback) {
         } else if (typeof backend._lookback === 'number' &&
             err && err.message === 'Tile does not exist' &&
             lookbacks === true) {
-            lookbacks == false;
+            lookbacks = false;
             var q = new queue.queue();
-            headers['x-vector-backend-object'] = 'fillzoom';
-            for (var lb = 1; lb <= backend._lookback; lb++) {
-                bz-= 1
-                bx = Math.floor(x / Math.pow(2, z - bz));
-                by = Math.floor(y / Math.pow(2, z - bz));
-                q.defer(loadAsync, bz, bx, by);
+            for (var lb = 1; lb <=  Math.min(backend._lookback, z); lb++) {
+                q.defer(loadAsync, bz - lb, Math.floor(x / Math.pow(2, lb)), Math.floor(y / Math.pow(2, lb)));
             }
             return q.awaitAll(function(err, data) {
+                if (err) return callback(err);
                 data = data.filter(function(d, i) {
-                    return d === null || i === 0;
+                    return d === null || i === data.length - 1;
                 });
+                headers['x-vector-backend-object'] = 'fillzoom';
                 bz = data[0].z;
                 bx = data[0].x;
                 by = data[0].y;
-                source.getTile(bz, bx, by, sourceGet);
+                sourceGet(data[0].err, data[0].body, data[0].head);
             });
-
         }
         if (err && err.message !== 'Tile does not exist') return callback(err);
 
@@ -174,7 +160,7 @@ Backend.prototype.getTile = function(z, x, y, callback) {
             headers = head || {};
             return makevtile(body);
         }
-    };
+    });
 
     function makevtile(data, type) {
         // If no last modified is provided, use epoch.
