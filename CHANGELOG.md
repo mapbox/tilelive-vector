@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.10.0
+- Updated the dependencies `tiletype`, `tilelive`, `sphericalmercator`, `mapbox-studio-default-style` to use the `@mapbox` scoped package.
+- Updated `Mapnik` to v3.6.0
+
 ## 3.9.4
 
 - Update to node-tilejson@1.x
