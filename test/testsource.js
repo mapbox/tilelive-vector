@@ -1,4 +1,4 @@
-var tilelive = require('tilelive');
+var tilelive = require('@mapbox/tilelive');
 var zlib = require('zlib');
 var fs = require('fs');
 var path = require('path');
