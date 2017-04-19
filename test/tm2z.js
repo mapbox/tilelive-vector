@@ -1,5 +1,5 @@
 var test = require('tape');
-var tilelive = require('tilelive');
+var tilelive = require('@mapbox/tilelive');
 var TileJSON = require('tilejson');
 var url = require('url');
 var assert = require('assert');

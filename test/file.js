@@ -1,7 +1,7 @@
 var test = require('tape');
 var path = require('path');
 var Vector = require('..');
-var tilelive = require('tilelive');
+var tilelive = require('@mapbox/tilelive');
 var TileJSON = require('tilejson');
 
 // Register vector:, tm2z:, tm2z+http: and mapbox: tilelive protocols
@@ -23,11 +23,11 @@ test('file ENOENT', function(assert) {
 });
 
 test('file xml', function(assert) {
-    var filepath = path.join(path.dirname(require.resolve('mapbox-studio-default-style')),'project.xml');
+    var filepath = path.join(path.dirname(require.resolve('@mapbox/mapbox-studio-default-style')),'project.xml');
     Vector(filepath, function(err, source) {
         assert.ifError(err);
         assert.equal(source instanceof Vector, true, 'returns source');
-        assert.equal(source._base, path.dirname(require.resolve('mapbox-studio-default-style')), 'sets base');
+        assert.equal(source._base, path.dirname(require.resolve('@mapbox/mapbox-studio-default-style')), 'sets base');
         assert.equal(source._xml.indexOf('https://www.mapbox.com/map-feedback/') > 0, true, 'finds xml');
         assert.end();
     });

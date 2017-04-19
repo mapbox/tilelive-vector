@@ -1,8 +1,8 @@
-var tilelive = require('tilelive');
+var tilelive = require('@mapbox/tilelive');
 var crypto = require('crypto');
 var mapnik = require('mapnik');
 var util = require('util');
-var sm = new (require('sphericalmercator'))();
+var sm = new (require('@mapbox/sphericalmercator'))();
 
 module.exports = Backend;
 
