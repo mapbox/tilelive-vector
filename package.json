@@ -19,7 +19,7 @@
     "@mapbox/tilelive": "~5.12.0",
     "@mapbox/tiletype": "0.3.x",
     "tar": "~2.2.1",
-    "request": "~2.65.0",
+    "request": "~2.72.0",
     "numeral": "~1.5.3",
     "@mapbox/sphericalmercator": "~1.0.5",
     "spherical": "~0.1.0",
