@@ -137,6 +137,24 @@ tilelive.protocols['test:'] = Testsource;
                                 JSON.parse(fs.readFileSync(fixtpath))
                             );
                         }
+                    } else if (source === 'i') {
+                        var fixtpathJSON = __dirname + '/expected/backend-' + source + '.' + key + '.json';
+                        var fixtpathPNG = __dirname + '/expected/backend-' + source + '.' + key + '.png';
+                        var map = new mapnik.Map(vtile.width(),vtile.height());
+                        map.loadSync(__dirname + '/fixtures/i.xml');
+                        map.extent = [-20037508.34, -20037508.34, 20037508.34, 20037508.34];
+                        vtile.render(map, new mapnik.Image(256, 256), function(err, vtileImage) {
+                            if (UPDATE) {
+                                fs.writeFileSync(fixtpathJSON, JSON.stringify(vtile.toJSON(), replacer, 2));
+                                vtileImage.saveSync(fixtpathPNG);
+                            } else {
+                                t.deepEqual(
+                                    JSON.parse(JSON.stringify(vtile.toJSON(), replacer)),
+                                    JSON.parse(fs.readFileSync(fixtpathJSON))
+                                );
+                                t.ok(0.02 * vtileImage.width() * vtileImage.height() > vtileImage.compare(mapnik.Image.fromBytesSync(fs.readFileSync(fixtpathPNG))));
+                            }
+                        });
                     } else {
                         var fixtpath = __dirname + '/expected/backend-' + source + '.' + key + '.json';
                         if (UPDATE) fs.writeFileSync(fixtpath, JSON.stringify(vtile.toJSON(), replacer, 2));
