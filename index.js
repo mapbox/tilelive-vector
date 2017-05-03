@@ -287,6 +287,9 @@ Vector.prototype.getInfo = function(callback) {
         }
         return memo;
     }, {});
+
+    this._info.autoscale = true;
+
     return callback(null, this._info);
 };
 
