@@ -82,49 +82,6 @@ Backend.prototype.getTile = function(z, x, y, callback) {
         headers['x-vector-backend-object'] = 'overzoom';
     }
 
-    source.getTile(bz, bx, by, function sourceGet(err, body, head) {
-        if (typeof backend._fillzoom === 'number' &&
-            err && err.message === 'Tile does not exist' &&
-            bz > backend._fillzoom) {
-            bz = backend._fillzoom;
-            bx = Math.floor(x / Math.pow(2, z - bz));
-            by = Math.floor(y / Math.pow(2, z - bz));
-            headers['x-vector-backend-object'] = 'fillzoom';
-            return source.getTile(bz, bx, by, sourceGet);
-        }
-        if (err && err.message !== 'Tile does not exist') return callback(err);
-
-        if (body instanceof mapnik.VectorTile) {
-            size = body._srcbytes;
-            headers = head || {};
-            return makevtile(body);
-        }
-
-        var compression = false;
-        if (body && body[0] == 0x78 && body[1] == 0x9C) {
-            compression = 'inflate';
-        } else if (body && body[0] == 0x1F && body[1] == 0x8B) {
-            compression = 'gunzip';
-        }
-
-        if (!body || !body.length) {
-            headers['x-vector-backend-object'] = 'empty';
-            return makevtile();
-        } else if (compression) {
-            size = body.length;
-            headers = head || {};
-            return makevtile(body, 'pbf');
-        // Image sources do not allow overzooming (yet).
-        } else if (bz < z && headers['x-vector-backend-object'] !== 'fillzoom') {
-            headers['x-vector-backend-object'] = 'empty';
-            return makevtile();
-        } else {
-            size = body.length;
-            headers = head || {};
-            return makevtile(body);
-        }
-    });
-
     function makevtile(data, type) {
         // If no last modified is provided, use epoch.
         headers['Last-Modified'] = new Date(headers['Last-Modified'] || 0).toUTCString();
@@ -168,6 +125,55 @@ Backend.prototype.getTile = function(z, x, y, callback) {
             return callback(err);
         }
     };
+
+    function sourceGet(err, body, head) {
+        if (typeof backend._fillzoom === 'number' &&
+            err && err.message === 'Tile does not exist' &&
+            bz > backend._fillzoom) {
+            bz = backend._fillzoom;
+            bx = Math.floor(x / Math.pow(2, z - bz));
+            by = Math.floor(y / Math.pow(2, z - bz));
+            headers['x-vector-backend-object'] = 'fillzoom';
+            return source.getTile(bz, bx, by, sourceGet);
+        }
+        if (err && err.message !== 'Tile does not exist') return callback(err);
+
+        if (body instanceof mapnik.VectorTile) {
+            size = body._srcbytes;
+            headers = head || {};
+            return makevtile(body);
+        }
+
+        var compression = false;
+        if (body && body[0] == 0x78 && body[1] == 0x9C) {
+            compression = 'inflate';
+        } else if (body && body[0] == 0x1F && body[1] == 0x8B) {
+            compression = 'gunzip';
+        }
+
+        if (!body || !body.length) {
+            headers['x-vector-backend-object'] = 'empty';
+            return makevtile();
+        } else if (compression) {
+            size = body.length;
+            headers = head || {};
+            return makevtile(body, 'pbf');
+        // Image sources do not allow overzooming (yet).
+        } else if (bz < z && headers['x-vector-backend-object'] !== 'fillzoom') {
+            headers['x-vector-backend-object'] = 'empty';
+            return makevtile();
+        } else {
+            size = body.length;
+            headers = head || {};
+            return makevtile(body);
+        }
+    };
+
+    sourceGet.scale = scale;
+    sourceGet.legacy = legacy;
+    sourceGet.upgrade = upgrade;
+    source.getTile(bz, bx, by, sourceGet);
+
 };
 
 // Proxies mapnik vtile.query method with the added convienice of
