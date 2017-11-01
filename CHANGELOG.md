@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.10.2
+
+- Pass `scale`, `legacy`, and `upgrade` params through to backend source.
+
 ## 3.10.1
 
 - Update request to 2.72.x
