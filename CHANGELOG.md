@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.11.0
+
+- Update to mapnik v3.7.0
+
 ## 3.10.2
 
 - Pass `scale`, `legacy`, and `upgrade` params through to backend source.
