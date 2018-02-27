@@ -1,8 +1,9 @@
 # Changelog
 
-## 3.11.0
+## 4.0.0
 
 - Update to mapnik v3.7.0
+- Drops support for windows
 
 ## 3.10.2
 
