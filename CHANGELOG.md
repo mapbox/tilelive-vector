@@ -1,5 +1,10 @@
 # Changelog
 
+## 4.0.0
+
+- Update to mapnik v3.7.0
+- Drops support for windows
+
 ## 3.10.2
 
 - Pass `scale`, `legacy`, and `upgrade` params through to backend source.
