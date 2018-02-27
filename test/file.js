@@ -2,7 +2,7 @@ var test = require('tape');
 var path = require('path');
 var Vector = require('..');
 var tilelive = require('@mapbox/tilelive');
-var TileJSON = require('tilejson');
+var TileJSON = require('@mapbox/tilejson');
 
 // Register vector:, tm2z:, tm2z+http: and mapbox: tilelive protocols
 Vector.registerProtocols(tilelive);

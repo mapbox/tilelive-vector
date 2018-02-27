@@ -30,11 +30,14 @@
     "istanbul": "~0.3.17",
     "coveralls": "~2.11.2",
     "tape": "2.13.x",
-    "tilejson": "1.x",
+    "@mapbox/tilejson": "^1.1.0",
     "simple-statistics": "~0.8.0"
   },
   "scripts": {
     "test": "tape test/*.js",
     "coverage": "istanbul cover tape test/*.js && coveralls < ./coverage/lcov.info"
+  },
+  "engine": {
+    "node": ">4.0.0"
   }
 }
