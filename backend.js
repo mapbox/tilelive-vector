@@ -45,7 +45,6 @@ Backend.prototype.getInfo = function(callback) {
     this._source.getInfo(callback);
 };
 
-// Wrapper around backend.getTile that implements a "locking" cache.
 Backend.prototype.getTile = function(z, x, y, callback) {
     if (!this._source) return callback(new Error('Tilesource not loaded'));
     if (z < 0 || x < 0 || y < 0 || x >= Math.pow(2,z) || y >= Math.pow(2,z)) {
