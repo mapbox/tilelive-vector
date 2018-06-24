@@ -102,8 +102,7 @@ tilelive.protocols['test:'] = Testsource;
             var z = key.split('.')[0] | 0;
             var x = key.split('.')[1] | 0;
             var y = key.split('.')[2] | 0;
-            var remaining = 2;
-            test('should render ' + source + ' (' + key + ')', function(t) {
+            test('should render ' + source + ' (' + key + ') to mapnik.VectorTile' , function(t) {
                 var cbTile = function(err, vtile, headers) {
                     t.ifError(err);
                     // Returns a vector tile.
@@ -150,6 +149,67 @@ tilelive.protocols['test:'] = Testsource;
                 if (source === 'c') {
                     cbTile.legacy = true;
                 }
+                sources[source].getTile(z,x,y, cbTile);
+            });
+
+            test('should render ' + source + ' (' + key + ') to raw Buffer' , function(t) {
+                var cbTile = function(err, buffer, headers) {
+                    t.ifError(err);
+                    // Returns a vector tile.
+                    if (buffer && buffer.length) {
+                      t.ok(buffer instanceof Buffer);
+                    }
+                    // No backend tiles last modified defaults to Date 0.
+                    // Otherwise, Last-Modified from backend should be passed.
+                    if (source == 'invalid' || (source == 'i' && ['2.0.0','2.0.1'].indexOf(key) >= 0)) {
+                        t.equal(headers['Last-Modified'], new Date(0).toUTCString());
+                        t.equal(headers['x-vector-backend-object'], 'empty', 'backend-object=empty');
+                    } else {
+                        t.equal(headers['Last-Modified'], Testsource.now.toUTCString());
+                        t.equal(headers['x-vector-backend-object'], 'default', 'backend-object=default');
+                    }
+                    // Check for presence of ETag and store away for later
+                    // ETag comparison.
+                    t.ok('ETag' in headers);
+                    // Content-Type.
+                    t.equal(headers['Content-Type'], 'application/x-protobuf');
+
+                    var vtile = new mapnik.VectorTile(z,x,y);
+                    if (buffer && buffer.length) {
+                      if (buffer.tile_type === 'pbf') {
+                        vtile.addData(buffer);
+                      } else {
+                        vtile.addImageBuffer(buffer,sources[source]._layer);
+                      }
+                    }
+
+                    // Compare vtile contents to expected fixtures.
+                    // if source is c, test legacy scale factor
+                    // at zoom > 1 it will compare with data at previous zoom level.
+                    if (source === 'c') {
+                        if (key[0] > 1) {
+                            key[0] -= 1;
+                            var fixtpath = __dirname + '/expected/backend-' + source + '.' + key + '-raw.json';
+                            if (UPDATE) fs.writeFileSync(fixtpath, JSON.stringify(vtile.toJSON(), replacer, 2));
+                            t.deepEqual(
+                                JSON.parse(JSON.stringify(vtile.toJSON(), replacer)),
+                                JSON.parse(fs.readFileSync(fixtpath))
+                            );
+                        }
+                    } else {
+                        var fixtpath = __dirname + '/expected/backend-' + source + '.' + key + '-raw.json';
+                        if (UPDATE) fs.writeFileSync(fixtpath, JSON.stringify(vtile.toJSON(), replacer, 2));
+                        t.deepEqual(
+                            JSON.parse(JSON.stringify(vtile.toJSON(), replacer)),
+                            JSON.parse(fs.readFileSync(fixtpath))
+                        );
+                    }
+                    t.end();
+                };
+                if (source === 'c') {
+                    cbTile.legacy = true;
+                }
+                cbTile.raw_buffer = true;
                 sources[source].getTile(z,x,y, cbTile);
             });
         });
