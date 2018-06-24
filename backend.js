@@ -53,6 +53,8 @@ Backend.prototype.getTile = function(z, x, y, callback) {
     var backend = this;
     var source = backend._source;
     var now = +new Date;
+    // if true, return raw buffer rather than mapnik.VectorTile
+    var raw_buffer = callback.raw_buffer || false;
     var legacy = callback.legacy || false;
     var scale = callback.scale || backend._scale;
     var upgrade = callback.upgrade || false;
@@ -95,6 +97,14 @@ Backend.prototype.getTile = function(z, x, y, callback) {
 
         // Set x-vector-backend-status header.
         headers['x-vector-backend-object'] = headers['x-vector-backend-object'] || 'default';
+
+        // Pass-thru of raw buffer (no mapnik.VectorTile)
+        if (raw_buffer) {
+            if (data) {
+              data.tile_type = type;
+            }
+            return callback(null, data, headers);
+        }
 
         // Pass-thru of an upstream mapnik vector tile (not pbf) source.
         if (data instanceof mapnik.VectorTile) return callback(null, data, headers);
@@ -209,4 +219,3 @@ Backend.prototype.queryTile = function(z, lon, lat, options, callback) {
         });
     });
 };
-
