@@ -153,11 +153,18 @@ tilelive.protocols['test:'] = Testsource;
             });
 
             test('should render ' + source + ' (' + key + ') to raw Buffer' , function(t) {
-                var cbTile = function(err, buffer, headers) {
+                var cbTile = function(err, buffer, headers, bz, bx, by) {
+                    t.ok(bz !== undefined);
+                    t.ok(bx !== undefined);
+                    t.ok(by !== undefined);
                     t.ifError(err);
                     // Returns a vector tile.
                     if (buffer && buffer.length) {
                       t.ok(buffer instanceof Buffer);
+                    }
+                    if (buffer) {
+                      t.ok(buffer.tile_type === 'pbf' || buffer.tile_type === undefined);
+                      t.ok(typeof(buffer.layer_name) === 'string' || buffer.layer_name === undefined);
                     }
                     // No backend tiles last modified defaults to Date 0.
                     // Otherwise, Last-Modified from backend should be passed.
@@ -174,7 +181,7 @@ tilelive.protocols['test:'] = Testsource;
                     // Content-Type.
                     t.equal(headers['Content-Type'], 'application/x-protobuf');
 
-                    var vtile = new mapnik.VectorTile(z,x,y);
+                    var vtile = new mapnik.VectorTile(bz,bx,by);
                     if (buffer && buffer.length) {
                       if (buffer.tile_type === 'pbf') {
                         vtile.addData(buffer);
