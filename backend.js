@@ -102,8 +102,9 @@ Backend.prototype.getTile = function(z, x, y, callback) {
         if (raw_buffer) {
             if (data) {
               data.tile_type = type;
+              data.layer_name = backend._layer;
             }
-            return callback(null, data, headers);
+            return callback(null, data, headers, bz, bx, by);
         }
 
         // Pass-thru of an upstream mapnik vector tile (not pbf) source.
