@@ -14,6 +14,9 @@
   ],
   "dependencies": {
     "@mapbox/sphericalmercator": "~1.0.5",
+    "aws-sdk": "^2.2.30",
+    "s3urls": "^1.3.0",
+    "mapnik": "~3.x",
     "@mapbox/tilelive": "~5.12.0",
     "@mapbox/tiletype": "0.3.x",
     "aws-sdk": "^2.2.30",
