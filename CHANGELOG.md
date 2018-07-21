@@ -1,5 +1,9 @@
 # Changelog
 
+## 4.1.0
+
+- Update to mapnik v3.x || v4.x
+
 ## 4.0.0
 
 - Update to mapnik v3.7.0
