@@ -86,9 +86,9 @@ Backend.prototype.getTile = function(z, x, y, callback) {
         headers['Last-Modified'] = new Date(headers['Last-Modified'] || 0).toUTCString();
 
         // Set an ETag if not present.
-        headers['ETag'] = headers['ETag'] || crypto.createHash('md5')
+        headers['ETag'] = headers['ETag'] || JSON.stringify(crypto.createHash('md5')
             .update((z+','+x+','+y) + (data && data.toString('binary')||''), 'utf8')
-            .digest('hex');
+            .digest('hex'));
 
         // Set content type.
         headers['Content-Type'] = 'application/x-protobuf';
