@@ -87,7 +87,7 @@ Backend.prototype.getTile = function(z, x, y, callback) {
 
         // Set an ETag if not present.
         headers['ETag'] = headers['ETag'] || JSON.stringify(crypto.createHash('md5')
-            .update((z+','+x+','+y) + (data||''))
+            .update((z+','+x+','+y) + (data && data.toString('binary')||''), 'utf8')
             .digest('hex'));
 
         // Set content type.
@@ -209,4 +209,3 @@ Backend.prototype.queryTile = function(z, lon, lat, options, callback) {
         });
     });
 };
-
