@@ -1,6 +1,6 @@
 {
   "name": "@mapbox/tilelive-vector",
-  "version": "4.1.1-dev1",
+  "version": "4.1.1",
   "main": "./index.js",
   "description": "Vector tile => raster tile backend for tilelive",
   "repository": {

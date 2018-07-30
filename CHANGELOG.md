@@ -1,5 +1,9 @@
 # Changelog
 
+## 4.1.1
+
+- Fix ETag algorithm to convert buffer as binary [#158](https://github.com/mapbox/tilelive-vector/pull/158)
+
 ## 4.1.0
 
 - Update to mapnik v3.x || v4.x
