@@ -38,6 +38,6 @@
     "coverage": "istanbul cover tape test/*.js && coveralls < ./coverage/lcov.info"
   },
   "engine": {
-    "node": ">4.0.0"
+    "node": ">=8"
   }
 }
