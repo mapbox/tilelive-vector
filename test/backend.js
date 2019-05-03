@@ -128,8 +128,7 @@ Object.keys(tests).forEach((source) => {
                 // at zoom > 1 it will compare with data at previous zoom level.
                 if (source === 'c') {
                     if (parseInt(key[0]) > 1) {
-                        const newkey = parseInt(key.split('.')[0]) - 1 + '.' + key.split('.')[1] + '.' +  key.split('.')[2];
-                        const fixtpath = __dirname + '/expected/backend-' + source + '.' + newkey + '.json';
+                        const fixtpath = __dirname + '/expected/backend-' + source + '.' + key + '.json';
                         if (UPDATE) fs.writeFileSync(fixtpath, JSON.stringify(vtile.toJSON(), replacer, 2));
                         t.deepEqual(
                             JSON.parse(JSON.stringify(vtile.toJSON(), replacer)),
@@ -195,8 +194,7 @@ Object.keys(tests).forEach((source) => {
                 // at zoom > 1 it will compare with data at previous zoom level.
                 if (source === 'c') {
                     if (parseInt(key[0]) > 1) {
-                        const newkey = parseInt(key.split('.')[0]) - 1 + '.' + key.split('.')[1] + '.' +  key.split('.')[2];
-                        const fixtpath = __dirname + '/expected/backend-' + source + '.' + newkey + '-raw.json';
+                        const fixtpath = __dirname + '/expected/backend-' + source + '.' + key + '-raw.json';
                         if (UPDATE) fs.writeFileSync(fixtpath, JSON.stringify(vtile.toJSON(), replacer, 2));
                         t.deepEqual(
                             JSON.parse(JSON.stringify(vtile.toJSON(), replacer)),
