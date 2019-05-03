@@ -417,7 +417,7 @@ function tm2z(uri, callback) {
 
     var xml;
     var base = path.join(os.tmpDir(), md5(id).substr(0,8) + '-' + path.basename(id));
-    var parser = tar.Parse();
+    var parser = new tar.Parse();
     var gunzip = zlib.Gunzip();
     var unpacked = false;
 
