@@ -41,7 +41,7 @@ class Backend {
     getInfo(callback) {
         if (!this._source) return callback(new Error('Tilesource not loaded'));
         this._source.getInfo(callback);
-    };
+    }
 
     getTile(z, x, y, callback) {
         if (!this._source) return callback(new Error('Tilesource not loaded'));
@@ -182,7 +182,7 @@ class Backend {
         sourceGet.upgrade = upgrade;
         source.getTile(bz, bx, by, sourceGet);
 
-    };
+    }
 
     // Proxies mapnik vtile.query method with the added convienice of
     // letting the tilelive-vector backend do the hard work of finding
@@ -217,7 +217,7 @@ class Backend {
                 return callback(null, results, headers);
             });
         });
-    };
+    }
 }
 
 module.exports = Backend;
