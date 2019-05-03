@@ -1,9 +1,6 @@
+'use strict';
+
 const fs = require('fs');
-const util = require('util');
-const path = require('path');
-const spawn = require('child_process').spawn;
-const exec = require('child_process').exec;
-const existsSync = require('fs').existsSync || require('path').existsSync;
 const mapnik = require('mapnik');
 
 function imageEqualsFile(buffer, file, meanError, callback) {

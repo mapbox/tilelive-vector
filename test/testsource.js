@@ -1,4 +1,5 @@
-const tilelive = require('@mapbox/tilelive');
+'use strict';
+
 const zlib = require('zlib');
 const fs = require('fs');
 const path = require('path');
@@ -157,15 +158,15 @@ function Testsource(uri, callback) {
 
 Testsource.prototype.getTile = function(z,x,y,callback) {
     const key = [z,x,y].join('.');
-    if (callback.scale == undefined) {
+    if (callback.scale === undefined) {
         return callback(new Error('Expected the callback to carry through scale option'));
     }
 
-    if (callback.legacy == undefined) {
+    if (callback.legacy === undefined) {
         return callback(new Error('Expected the callback to carry through legacy option'));
     }
 
-    if (callback.upgrade == undefined) {
+    if (callback.upgrade === undefined) {
         return callback(new Error('Expected the callback to carry through upgrade option'));
     }
 

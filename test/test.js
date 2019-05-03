@@ -1,6 +1,7 @@
+'use strict';
+
 const test = require('tape');
 const tilelive = require('@mapbox/tilelive');
-const url = require('url');
 const Vector = require('..');
 const path = require('path');
 const fs = require('fs');
@@ -27,26 +28,26 @@ const xml = {
 };
 
 test('should fail without backend', (t) => {
-    new Vector({ xml: xml.c }, (err) => {
+    Vector({ xml: xml.c }, (err) => {
         t.equal(err.message, 'No backend');
         t.end();
     });
 });
 test('should fail without xml', (t) => {
-    new Vector({ backend: new Testsource() }, (err) => {
+    Vector({ backend: new Testsource() }, (err) => {
         t.equal(err.message, 'No xml');
         t.end();
     });
 });
 test('should load with callback', (t) => {
-    new Vector({ backend: new Testsource(), xml: xml.a }, (err, source) => {
+    Vector({ backend: new Testsource(), xml: xml.a }, (err, source) => {
         t.ifError(err);
         t.ok(source);
         t.end();
     });
 });
 test('#open should call all listeners', (t) => {
-    const v = new Vector({ backend: new Testsource(), xml: xml.a });
+    const v = Vector({ backend: new Testsource(), xml: xml.a });
     let remaining = 3;
     for (let i = 0; i < remaining; i++) v.open((err, source) => {
         t.ifError(err);
@@ -55,7 +56,7 @@ test('#open should call all listeners', (t) => {
     });
 });
 test('should get info', (t) => {
-    new Vector({ backend: new Testsource(), xml: xml.a }, (err, source) => {
+    Vector({ backend: new Testsource(), xml: xml.a }, (err, source) => {
         t.ifError(err);
         t.ok(source);
         source.getInfo((err, info) => {
@@ -72,7 +73,7 @@ test('should get info', (t) => {
     });
 });
 test('should update xml, backend', (t) => {
-    new Vector({ xml:xml.a }, (err, source) => {
+    Vector({ xml:xml.a }, (err, source) => {
         t.ifError(err);
         source.getInfo((err, info) => {
             t.ifError(err);
@@ -89,14 +90,14 @@ test('should update xml, backend', (t) => {
     });
 });
 test('should use fallback backend', (t) => {
-    new Vector({ source:'test:///a', xml: xml.c }, (err, source) => {
+    Vector({ source:'test:///a', xml: xml.c }, (err, source) => {
         t.ifError(err);
         t.ok(source);
         t.end();
     });
 });
 test('passes through backend expires header', (t) => {
-    new Vector({ source:'test:///expires', xml: xml.expires }, (err, source) => {
+    Vector({ source:'test:///expires', xml: xml.expires }, (err, source) => {
         t.ifError(err);
         source.getTile(0, 0, 0, (err, buffer, headers) => {
             t.ifError(err);
@@ -156,7 +157,6 @@ const formats = {
     json: { ctype: 'application/json' },
     jpeg: { ctype: 'image/jpeg' },
     png: { ctype: 'image/png' },
-    svg: { ctype: 'image/svg+xml', renderer: 'cairo' },
     svg: { ctype: 'image/svg+xml', renderer: 'svg' },
     utf: { ctype: 'application/json' }
 };
@@ -258,7 +258,7 @@ Object.keys(formats).forEach((format) => {
             }
         };
         cbTile.format = format;
-        if (format == 'png') cbTile.format = 'png8:m=h';
+        if (format === 'png') cbTile.format = 'png8:m=h';
         if (formats[format].renderer) {
             cbTile.renderer = formats[format].renderer;
         }

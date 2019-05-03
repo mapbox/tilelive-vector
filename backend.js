@@ -1,7 +1,8 @@
+'use strict';
+
 const tilelive = require('@mapbox/tilelive');
 const crypto = require('crypto');
 const mapnik = require('mapnik');
-const util = require('util');
 const sm = new (require('@mapbox/sphericalmercator'))();
 
 module.exports = Backend;
@@ -50,7 +51,6 @@ Backend.prototype.getTile = function(z, x, y, callback) {
     }
     const backend = this;
     const source = backend._source;
-    const now = +new Date;
     // if true, return raw buffer rather than mapnik.VectorTile
     const raw_buffer = callback.raw_buffer || false;
     const legacy = callback.legacy || false;
@@ -59,15 +59,16 @@ Backend.prototype.getTile = function(z, x, y, callback) {
 
     // If scale > 1 adjusts source data zoom level inversely.
     // scale 2x => z-1, scale 4x => z-2, scale 8x => z-3, etc.
+    let bz, bx, by;
     if (legacy && z >= backend._minzoom) {
         const d = Math.round(Math.log(scale) / Math.log(2));
-        var bz = (z - d) > backend._minzoom ? z - d : backend._minzoom;
-        var bx = Math.floor(x / Math.pow(2, z - bz));
-        var by = Math.floor(y / Math.pow(2, z - bz));
+        bz = (z - d) > backend._minzoom ? z - d : backend._minzoom;
+        bx = Math.floor(x / Math.pow(2, z - bz));
+        by = Math.floor(y / Math.pow(2, z - bz));
     } else {
-        var bz = z | 0;
-        var bx = x | 0;
-        var by = y | 0;
+        bz = z | 0;
+        bx = x | 0;
+        by = y | 0;
     }
 
     let size = 0;
@@ -153,9 +154,9 @@ Backend.prototype.getTile = function(z, x, y, callback) {
         }
 
         let compression = false;
-        if (body && body[0] == 0x78 && body[1] == 0x9C) {
+        if (body && body[0] === 0x78 && body[1] === 0x9C) {
             compression = 'inflate';
-        } else if (body && body[0] == 0x1F && body[1] == 0x8B) {
+        } else if (body && body[0] === 0x1F && body[1] === 0x8B) {
             compression = 'gunzip';
         }
 

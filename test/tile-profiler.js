@@ -1,3 +1,5 @@
+'use strict';
+
 const test = require('tape');
 const tilelive = require('@mapbox/tilelive');
 const Vector = require('..');
@@ -6,7 +8,6 @@ const Testsource = require('./testsource');
 const ss = require('simple-statistics');
 const fs = require('fs');
 const path = require('path');
-const zlib = require('zlib');
 const _ = require('underscore');
 
 // Tilelive test source.
@@ -15,7 +16,7 @@ tilelive.protocols['test:'] = Testsource;
 const xml = fs.readFileSync(path.resolve(__dirname + '/fixtures/a.xml'), 'utf8');
 
 test('finds layer information', (t) => {
-    new Vector({ uri:'test:///a', xml: xml }, (err, source) => {
+    Vector({ uri:'test:///a', xml: xml }, (err, source) => {
         t.ifError(err);
         const cb = function(err, vtile, headers) {
             t.ifError(err);
@@ -28,7 +29,7 @@ test('finds layer information', (t) => {
 });
 
 test('returns expected layer information', (t) => {
-    new Vector({ uri:'test:///a', xml: xml }, (err, source) => {
+    Vector({ uri:'test:///a', xml: xml }, (err, source) => {
         t.ifError(err);
         source._backend.getTile(0,0,0, (err, vtile, headers) => {
             if (err) throw err;

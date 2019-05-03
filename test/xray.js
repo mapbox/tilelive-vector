@@ -1,3 +1,5 @@
+'use strict';
+
 const test = require('tape');
 const tilelive = require('@mapbox/tilelive');
 const imageEqualsFile = require('./image.js');
@@ -11,19 +13,19 @@ const path = require('path');
 tilelive.protocols['test:'] = Testsource;
 
 test('invalid', (t) => {
-    new xray({}, (err) => {
+    xray({}, (err) => {
         t.equal('Error: opts.uri or opts.source must be set', err.toString());
         t.end();
     });
 });
 test('invalid-novector', (t) => {
-    new xray({ uri:'test:///invalid-novector' }, (err) => {
+    xray({ uri:'test:///invalid-novector' }, (err) => {
         t.equal('Error: source must contain a vector_layers property', err.toString());
         t.end();
     });
 });
 test('loads uri', (t) => {
-    new xray({ uri:'test:///a' }, (err, source) => {
+    xray({ uri:'test:///a' }, (err, source) => {
         t.ifError(err);
         t.ok(!!source);
         source.getTile(0,0,0, (err,buffer) => {
@@ -39,7 +41,7 @@ test('loads uri', (t) => {
     });
 });
 test('loads uri + transparent', (t) => {
-    new xray({ uri:'test:///a', transparent:true }, (err, source) => {
+    xray({ uri:'test:///a', transparent:true }, (err, source) => {
         t.ifError(err);
         t.ok(!!source);
         source.getTile(0,0,0, (err,buffer) => {
@@ -56,7 +58,7 @@ test('loads uri + transparent', (t) => {
 });
 test('loads source', (t) => {
     const source = new Testsource('a');
-    new xray({
+    xray({
         source: source,
         minzoom: 0,
         maxzoom: 1,
@@ -68,7 +70,7 @@ test('loads source', (t) => {
     });
 });
 test('loads raster source', (t) => {
-    new xray({ uri:'test:///i' }, (err, source) => {
+    xray({ uri:'test:///i' }, (err, source) => {
         t.ifError(err);
         t.ok(!!source);
         source.getTile(0,0,0, (err,buffer) => {

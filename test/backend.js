@@ -1,9 +1,9 @@
+'use strict';
+
 const test = require('tape');
 const tilelive = require('@mapbox/tilelive');
-const url = require('url');
 const Backend = require('..').Backend;
 const mapnik = require('..').mapnik;
-const path = require('path');
 const fs = require('fs');
 const Testsource = require('./testsource');
 const zlib = require('zlib');
@@ -13,13 +13,13 @@ const UPDATE = process.env.UPDATE;
 tilelive.protocols['test:'] = Testsource;
 
 test('invalid', (t) => {
-    new Backend({}, (err) => {
+    Backend({}, (err) => {
         t.equal('Error: opts.uri or opts.source must be set', err.toString());
         t.end();
     });
 });
 test('async default opts', (t) => {
-    new Backend({ uri:'test:///a' }, (err, source) => {
+    Backend({ uri:'test:///a' }, (err, source) => {
         t.ifError(err);
         t.equal(1, source._scale);
         t.equal(0, source._minzoom);
@@ -109,7 +109,7 @@ Object.keys(tests).forEach((source) => {
                 t.ok(vtile instanceof mapnik.VectorTile);
                 // No backend tiles last modified defaults to Date 0.
                 // Otherwise, Last-Modified from backend should be passed.
-                if (source == 'invalid' || (source == 'i' && ['2.0.0','2.0.1'].indexOf(key) >= 0)) {
+                if (source === 'invalid' || (source === 'i' && ['2.0.0','2.0.1'].indexOf(key) >= 0)) {
                     t.equal(headers['Last-Modified'], new Date(0).toUTCString());
                     t.equal(headers['x-vector-backend-object'], 'empty', 'backend-object=empty');
                 } else {
@@ -129,7 +129,7 @@ Object.keys(tests).forEach((source) => {
                 if (source === 'c') {
                     if (key[0] > 1) {
                         key[0] -= 1;
-                        var fixtpath = __dirname + '/expected/backend-' + source + '.' + key + '.json';
+                        const fixtpath = __dirname + '/expected/backend-' + source + '.' + key + '.json';
                         if (UPDATE) fs.writeFileSync(fixtpath, JSON.stringify(vtile.toJSON(), replacer, 2));
                         t.deepEqual(
                             JSON.parse(JSON.stringify(vtile.toJSON(), replacer)),
@@ -137,7 +137,7 @@ Object.keys(tests).forEach((source) => {
                         );
                     }
                 } else {
-                    var fixtpath = __dirname + '/expected/backend-' + source + '.' + key + '.json';
+                    const fixtpath = __dirname + '/expected/backend-' + source + '.' + key + '.json';
                     if (UPDATE) fs.writeFileSync(fixtpath, JSON.stringify(vtile.toJSON(), replacer, 2));
                     t.deepEqual(
                         JSON.parse(JSON.stringify(vtile.toJSON(), replacer)),
@@ -168,7 +168,7 @@ Object.keys(tests).forEach((source) => {
                 }
                 // No backend tiles last modified defaults to Date 0.
                 // Otherwise, Last-Modified from backend should be passed.
-                if (source == 'invalid' || (source == 'i' && ['2.0.0','2.0.1'].indexOf(key) >= 0)) {
+                if (source === 'invalid' || (source === 'i' && ['2.0.0','2.0.1'].indexOf(key) >= 0)) {
                     t.equal(headers['Last-Modified'], new Date(0).toUTCString());
                     t.equal(headers['x-vector-backend-object'], 'empty', 'backend-object=empty');
                 } else {
@@ -196,7 +196,7 @@ Object.keys(tests).forEach((source) => {
                 if (source === 'c') {
                     if (key[0] > 1) {
                         key[0] -= 1;
-                        var fixtpath = __dirname + '/expected/backend-' + source + '.' + key + '-raw.json';
+                        const fixtpath = __dirname + '/expected/backend-' + source + '.' + key + '-raw.json';
                         if (UPDATE) fs.writeFileSync(fixtpath, JSON.stringify(vtile.toJSON(), replacer, 2));
                         t.deepEqual(
                             JSON.parse(JSON.stringify(vtile.toJSON(), replacer)),
@@ -204,7 +204,7 @@ Object.keys(tests).forEach((source) => {
                         );
                     }
                 } else {
-                    var fixtpath = __dirname + '/expected/backend-' + source + '.' + key + '-raw.json';
+                    const fixtpath = __dirname + '/expected/backend-' + source + '.' + key + '-raw.json';
                     if (UPDATE) fs.writeFileSync(fixtpath, JSON.stringify(vtile.toJSON(), replacer, 2));
                     t.deepEqual(
                         JSON.parse(JSON.stringify(vtile.toJSON(), replacer)),

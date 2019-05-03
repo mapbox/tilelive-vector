@@ -1,16 +1,11 @@
+'use strict';
+
 const test = require('tape');
 const tilelive = require('@mapbox/tilelive');
 const TileJSON = require('@mapbox/tilejson');
-const url = require('url');
-const assert = require('assert');
 const path = require('path');
 const fs = require('fs');
-const crypto = require('crypto');
 const Vector = require('..');
-
-function md5(str) {
-    return crypto.createHash('md5').update(str).digest('hex');
-}
 
 // skip tests that require s3 authentication if necessary
 // use ~$ TILELIVE_VECTOR_NO_AUTH=true npm test

@@ -1,3 +1,5 @@
+'use strict';
+
 const _ = require('underscore');
 const spherical = require('spherical');
 
@@ -50,6 +52,6 @@ function findDistances(coord, index, coordinates) {
 function flattenGeoJsonCoords(geometry) {
     if (geometry.type === 'Point') return [geometry.coordinates];
     if (geometry.type === 'LineString' || geometry.type === 'MultiPoint') return geometry.coordinates;
-    if (geometry.type == 'Polygon' || geometry.type === 'MultiLineString') return _(geometry.coordinates).flatten(true);
+    if (geometry.type === 'Polygon' || geometry.type === 'MultiLineString') return _(geometry.coordinates).flatten(true);
     if (geometry.type === 'MultiPolygon') return _(geometry.coordinates).flatten();
 }
