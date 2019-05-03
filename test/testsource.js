@@ -1,25 +1,25 @@
-var tilelive = require('@mapbox/tilelive');
-var zlib = require('zlib');
-var fs = require('fs');
-var path = require('path');
+const tilelive = require('@mapbox/tilelive');
+const zlib = require('zlib');
+const fs = require('fs');
+const path = require('path');
 
 module.exports = Testsource;
 
 // Load fixture data.
-var infos = {
+const infos = {
     a: {
         minzoom:0,
         maxzoom:1,
         vector_layers: [
             {
-                "id": "coastline",
-                "description": "",
-                "minzoom": 0,
-                "maxzoom": 22,
-                "fields": {
-                    "FeatureCla": "String",
-                    "Note": "String",
-                    "ScaleRank": "Number"
+                'id': 'coastline',
+                'description': '',
+                'minzoom': 0,
+                'maxzoom': 22,
+                'fields': {
+                    'FeatureCla': 'String',
+                    'Note': 'String',
+                    'ScaleRank': 'Number'
                 }
             }
         ]
@@ -30,14 +30,14 @@ var infos = {
         fillzoom:1,
         vector_layers: [
             {
-                "id": "coastline",
-                "description": "",
-                "minzoom": 0,
-                "maxzoom": 22,
-                "fields": {
-                    "FeatureCla": "String",
-                    "Note": "String",
-                    "ScaleRank": "Number"
+                'id': 'coastline',
+                'description': '',
+                'minzoom': 0,
+                'maxzoom': 22,
+                'fields': {
+                    'FeatureCla': 'String',
+                    'Note': 'String',
+                    'ScaleRank': 'Number'
                 }
             }
         ]
@@ -56,14 +56,14 @@ var infos = {
         maxzoom:0,
         vector_layers: [
             {
-                "id": "coastline",
-                "description": "",
-                "minzoom": 0,
-                "maxzoom": 22,
-                "fields": {
-                    "FeatureCla": "String",
-                    "Note": "String",
-                    "ScaleRank": "Number"
+                'id': 'coastline',
+                'description': '',
+                'minzoom': 0,
+                'maxzoom': 22,
+                'fields': {
+                    'FeatureCla': 'String',
+                    'Note': 'String',
+                    'ScaleRank': 'Number'
                 }
             }
         ]
@@ -73,14 +73,14 @@ var infos = {
         maxzoom:1,
         vector_layers: [
             {
-                "id": "coastline",
-                "description": "",
-                "minzoom": 0,
-                "maxzoom": 22,
-                "fields": {
-                    "FeatureCla": "String",
-                    "Note": "String",
-                    "ScaleRank": "Number"
+                'id': 'coastline',
+                'description': '',
+                'minzoom': 0,
+                'maxzoom': 22,
+                'fields': {
+                    'FeatureCla': 'String',
+                    'Note': 'String',
+                    'ScaleRank': 'Number'
                 }
             }
         ]
@@ -90,14 +90,14 @@ var infos = {
         maxzoom:2,
         vector_layers: [
             {
-                "id": "coastline",
-                "description": "",
-                "minzoom": 0,
-                "maxzoom": 22,
-                "fields": {
-                    "FeatureCla": "String",
-                    "Note": "String",
-                    "ScaleRank": "Number"
+                'id': 'coastline',
+                'description': '',
+                'minzoom': 0,
+                'maxzoom': 22,
+                'fields': {
+                    'FeatureCla': 'String',
+                    'Note': 'String',
+                    'ScaleRank': 'Number'
                 }
             }
         ]
@@ -105,28 +105,28 @@ var infos = {
 };
 
 Testsource.tiles = {
-    a: fs.readdirSync(path.resolve(path.join(__dirname, 'fixtures','a'))).reduce(function(memo, basename) {
-        var key = basename.split('.').slice(0,3).join('.');
+    a: fs.readdirSync(path.resolve(path.join(__dirname, 'fixtures','a'))).reduce((memo, basename) => {
+        const key = basename.split('.').slice(0,3).join('.');
         memo[key] = fs.readFileSync(path.resolve(path.join(__dirname, 'fixtures', 'a', basename)));
         return memo;
     }, {}),
-    b: fs.readdirSync(path.resolve(path.join(__dirname, 'fixtures','b'))).reduce(function(memo, basename) {
-        var key = basename.split('.').slice(0,3).join('.');
+    b: fs.readdirSync(path.resolve(path.join(__dirname, 'fixtures','b'))).reduce((memo, basename) => {
+        const key = basename.split('.').slice(0,3).join('.');
         memo[key] = fs.readFileSync(path.resolve(path.join(__dirname, 'fixtures', 'b', basename)));
         return memo;
     }, {}),
-    i: fs.readdirSync(path.resolve(path.join(__dirname, 'fixtures','i'))).reduce(function(memo, basename) {
-        var key = basename.split('.').slice(0,3).join('.');
+    i: fs.readdirSync(path.resolve(path.join(__dirname, 'fixtures','i'))).reduce((memo, basename) => {
+        const key = basename.split('.').slice(0,3).join('.');
         memo[key] = fs.readFileSync(path.resolve(path.join(__dirname, 'fixtures', 'i', basename)));
         return memo;
     }, {}),
-    gz: fs.readdirSync(path.resolve(path.join(__dirname, 'fixtures','gz'))).reduce(function(memo, basename) {
-        var key = basename.split('.').slice(0,3).join('.');
+    gz: fs.readdirSync(path.resolve(path.join(__dirname, 'fixtures','gz'))).reduce((memo, basename) => {
+        const key = basename.split('.').slice(0,3).join('.');
         memo[key] = fs.readFileSync(path.resolve(path.join(__dirname, 'fixtures', 'gz', basename)));
         return memo;
     }, {}),
-    expires: fs.readdirSync(path.resolve(path.join(__dirname, 'fixtures','a'))).reduce(function(memo, basename) {
-        var key = basename.split('.').slice(0,3).join('.');
+    expires: fs.readdirSync(path.resolve(path.join(__dirname, 'fixtures','a'))).reduce((memo, basename) => {
+        const key = basename.split('.').slice(0,3).join('.');
         memo[key] = fs.readFileSync(path.resolve(path.join(__dirname, 'fixtures', 'a', basename)));
         return memo;
     }, {}),
@@ -134,7 +134,7 @@ Testsource.tiles = {
 };
 
 // Additional error tile fixtures.
-zlib.deflate(new Buffer(0), function(err, deflated) {
+zlib.deflate(new Buffer(0), (err, deflated) => {
     if (err) throw err;
     Testsource.tiles.invalid['0.0.0'] = deflated;
 });
@@ -153,20 +153,20 @@ function Testsource(uri, callback) {
     };
     this.stats = {};
     return callback && callback(null, this);
-};
+}
 
 Testsource.prototype.getTile = function(z,x,y,callback) {
-    var key = [z,x,y].join('.');
+    const key = [z,x,y].join('.');
     if (callback.scale == undefined) {
-        return callback(new Error("Expected the callback to carry through scale option"));
+        return callback(new Error('Expected the callback to carry through scale option'));
     }
 
     if (callback.legacy == undefined) {
-        return callback(new Error("Expected the callback to carry through legacy option"));
+        return callback(new Error('Expected the callback to carry through legacy option'));
     }
 
     if (callback.upgrade == undefined) {
-        return callback(new Error("Expected the callback to carry through upgrade option"));
+        return callback(new Error('Expected the callback to carry through upgrade option'));
     }
 
     // Count number of times each key is requested for tests.
@@ -174,7 +174,7 @@ Testsource.prototype.getTile = function(z,x,y,callback) {
     this.stats[key]++;
 
     // Headers.
-    var headers = {
+    const headers = {
         'Last-Modified': Testsource.now.toUTCString(),
         'ETag':'73f12a518adef759138c142865287a18',
         'Content-Type':'application/x-protobuf'

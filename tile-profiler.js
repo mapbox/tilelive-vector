@@ -1,15 +1,15 @@
-var _ = require('underscore');
-var spherical = require('spherical');
+const _ = require('underscore');
+const spherical = require('spherical');
 
 module.exports = {
     layerInfo: function(vtile) {
-        var jsonsizes = vtile.toJSON().reduce(function(memo, l) {
+        const jsonsizes = vtile.toJSON().reduce((memo, l) => {
             memo[l.name] = JSON.stringify(l).length;
             return memo;
         }, {});
 
-        return JSON.parse(vtile.toGeoJSON('__array__')).map(function(layer) {
-            var info = {
+        return JSON.parse(vtile.toGeoJSON('__array__')).map((layer) => {
+            const info = {
                 name: layer.name,                  // name of the layer
                 coordCount: [],                    // # coords per feature
                 duplicateCoordCount: [],           // # duplicate coords per feature
@@ -24,8 +24,8 @@ module.exports = {
 };
 
 function featureDetails(info, feature) {
-    var coords = flattenGeoJsonCoords(feature.geometry);
-    var coordDistances = coords.map(findDistances);
+    const coords = flattenGeoJsonCoords(feature.geometry);
+    const coordDistances = coords.map(findDistances);
     coordDistances.shift();
 
     info.coordCount.push(coords.length);
@@ -48,7 +48,7 @@ function findDistances(coord, index, coordinates) {
 }
 
 function flattenGeoJsonCoords(geometry) {
-    if (geometry.type === 'Point') return [ geometry.coordinates ];
+    if (geometry.type === 'Point') return [geometry.coordinates];
     if (geometry.type === 'LineString' || geometry.type === 'MultiPoint') return geometry.coordinates;
     if (geometry.type == 'Polygon' || geometry.type === 'MultiLineString') return _(geometry.coordinates).flatten(true);
     if (geometry.type === 'MultiPolygon') return _(geometry.coordinates).flatten();
