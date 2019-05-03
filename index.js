@@ -38,7 +38,7 @@ class Vector extends EventEmitter {
             const filepath = path.resolve(uri.pathname);
             fs.readFile(filepath, 'utf8', (err, xml) => {
                 if (err) return callback(err);
-                Vector({
+                new Vector({
                     xml:xml,
                     base:path.dirname(filepath)
                 }, callback);
@@ -429,7 +429,7 @@ function tm2z(uri, callback) {
     const id = url.format(uri);
 
     let xml;
-    const base = path.join(os.tmpDir(), md5(id).substr(0,8) + '-' + path.basename(id));
+    const base = path.join(os.tmpdir(), md5(id).substr(0,8) + '-' + path.basename(id));
     const parser = new tar.Parse();
     const gunzip = zlib.Gunzip();
     let unpacked = false;

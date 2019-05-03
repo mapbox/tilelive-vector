@@ -304,7 +304,7 @@ function replacer(key, value) {
             value = value.data;
         }
         const ln = value.length || 0;
-        const buffer = new Buffer.from(ln);
+        const buffer = new Buffer(ln);
         for (let i = 0; i < ln; i++) buffer.writeUInt8(value[i], i);
         return buffer.toString('hex');
     } else {

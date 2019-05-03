@@ -28,26 +28,26 @@ const xml = {
 };
 
 test('should fail without backend', (t) => {
-    Vector({ xml: xml.c }, (err) => {
+    new Vector({ xml: xml.c }, (err) => {
         t.equal(err.message, 'No backend');
         t.end();
     });
 });
 test('should fail without xml', (t) => {
-    Vector({ backend: new Testsource() }, (err) => {
+    new Vector({ backend: new Testsource() }, (err) => {
         t.equal(err.message, 'No xml');
         t.end();
     });
 });
 test('should load with callback', (t) => {
-    Vector({ backend: new Testsource(), xml: xml.a }, (err, source) => {
+    new Vector({ backend: new Testsource(), xml: xml.a }, (err, source) => {
         t.ifError(err);
         t.ok(source);
         t.end();
     });
 });
 test('#open should call all listeners', (t) => {
-    const v = Vector({ backend: new Testsource(), xml: xml.a });
+    const v = new Vector({ backend: new Testsource(), xml: xml.a });
     let remaining = 3;
     for (let i = 0; i < remaining; i++) v.open((err, source) => {
         t.ifError(err);
@@ -56,7 +56,7 @@ test('#open should call all listeners', (t) => {
     });
 });
 test('should get info', (t) => {
-    Vector({ backend: new Testsource(), xml: xml.a }, (err, source) => {
+    new Vector({ backend: new Testsource(), xml: xml.a }, (err, source) => {
         t.ifError(err);
         t.ok(source);
         source.getInfo((err, info) => {
@@ -73,7 +73,7 @@ test('should get info', (t) => {
     });
 });
 test('should update xml, backend', (t) => {
-    Vector({ xml:xml.a }, (err, source) => {
+    new Vector({ xml:xml.a }, (err, source) => {
         t.ifError(err);
         source.getInfo((err, info) => {
             t.ifError(err);
@@ -90,14 +90,14 @@ test('should update xml, backend', (t) => {
     });
 });
 test('should use fallback backend', (t) => {
-    Vector({ source:'test:///a', xml: xml.c }, (err, source) => {
+    new Vector({ source:'test:///a', xml: xml.c }, (err, source) => {
         t.ifError(err);
         t.ok(source);
         t.end();
     });
 });
 test('passes through backend expires header', (t) => {
-    Vector({ source:'test:///expires', xml: xml.expires }, (err, source) => {
+    new Vector({ source:'test:///expires', xml: xml.expires }, (err, source) => {
         t.ifError(err);
         source.getTile(0, 0, 0, (err, buffer, headers) => {
             t.ifError(err);

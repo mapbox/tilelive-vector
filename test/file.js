@@ -18,7 +18,7 @@ tilelive.protocols['mapbox:'] = function Source(uri, callback) {
 Vector.mapnik.register_fonts(path.join(__dirname, 'fonts', 'source-sans-pro'));
 
 test('file ENOENT', (assert) => {
-    Vector('/does-not-exist', (err, source) => {
+    new Vector('/does-not-exist', (err, source) => {
         assert.equal(err.code, 'ENOENT');
         assert.end();
     });
@@ -26,7 +26,7 @@ test('file ENOENT', (assert) => {
 
 test('file xml', (assert) => {
     const filepath = path.join(path.dirname(require.resolve('@mapbox/mapbox-studio-default-style')),'project.xml');
-    Vector(filepath, (err, source) => {
+    new Vector(filepath, (err, source) => {
         assert.ifError(err);
         assert.equal(source instanceof Vector, true, 'returns source');
         assert.equal(source._base, path.dirname(require.resolve('@mapbox/mapbox-studio-default-style')), 'sets base');
