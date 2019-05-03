@@ -62,7 +62,7 @@ class Vector extends EventEmitter {
         this.update(uri, (err) => { s.emit('open', err, s); });
     }
 
-    registerProtocols() {
+    static registerProtocols() {
         tilelive.protocols['vector:'] = Vector;
         tilelive.protocols['tm2z:'] = tm2z;
         tilelive.protocols['tm2z+http:'] = tm2z;
@@ -108,7 +108,7 @@ class Vector extends EventEmitter {
             const source = map.parameters.source || opts.source;
             if (!s._backend || s._source !== source) {
                 if (!source) return callback(new Error('No backend'));
-                Backend({
+                new Backend({
                     uri: source,
                     scale: s._scale
                 }, (err, backend) => {

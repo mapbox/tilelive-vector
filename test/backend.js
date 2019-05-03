@@ -13,13 +13,13 @@ const UPDATE = process.env.UPDATE;
 tilelive.protocols['test:'] = Testsource;
 
 test('invalid', (t) => {
-    Backend({}, (err) => {
+    new Backend({}, (err) => {
         t.equal('Error: opts.uri or opts.source must be set', err.toString());
         t.end();
     });
 });
 test('async default opts', (t) => {
-    Backend({ uri:'test:///a' }, (err, source) => {
+    new Backend({ uri:'test:///a' }, (err, source) => {
         t.ifError(err);
         t.equal(1, source._scale);
         t.equal(0, source._minzoom);
@@ -127,9 +127,9 @@ Object.keys(tests).forEach((source) => {
                 // if source is c, test legacy scale factor
                 // at zoom > 1 it will compare with data at previous zoom level.
                 if (source === 'c') {
-                    if (key[0] > 1) {
-                        key[0] -= 1;
-                        const fixtpath = __dirname + '/expected/backend-' + source + '.' + key + '.json';
+                    if (parseInt(key[0]) > 1) {
+                        const newkey = parseInt(key.split('.')[0]) - 1 + '.' + key.split('.')[1] + '.' +  key.split('.')[2]
+                        const fixtpath = __dirname + '/expected/backend-' + source + '.' + newkey + '.json';
                         if (UPDATE) fs.writeFileSync(fixtpath, JSON.stringify(vtile.toJSON(), replacer, 2));
                         t.deepEqual(
                             JSON.parse(JSON.stringify(vtile.toJSON(), replacer)),
@@ -194,9 +194,9 @@ Object.keys(tests).forEach((source) => {
                 // if source is c, test legacy scale factor
                 // at zoom > 1 it will compare with data at previous zoom level.
                 if (source === 'c') {
-                    if (key[0] > 1) {
-                        key[0] -= 1;
-                        const fixtpath = __dirname + '/expected/backend-' + source + '.' + key + '-raw.json';
+                    if (parseInt(key[0]) > 1) {
+                        const newkey = parseInt(key.split('.')[0]) - 1 + '.' + key.split('.')[1] + '.' +  key.split('.')[2]
+                        const fixtpath = __dirname + '/expected/backend-' + source + '.' + newkey + '-raw.json';
                         if (UPDATE) fs.writeFileSync(fixtpath, JSON.stringify(vtile.toJSON(), replacer, 2));
                         t.deepEqual(
                             JSON.parse(JSON.stringify(vtile.toJSON(), replacer)),
@@ -222,7 +222,7 @@ Object.keys(tests).forEach((source) => {
     });
 });
 test('treats unknown buffer as image', (t) => {
-    Testsource.tiles.invalid['1.0.0'] = new Buffer('asdf'); // invalid deflate
+    Testsource.tiles.invalid['1.0.0'] = new Buffer.from('asdf'); // invalid deflate
     sources.invalid.getTile(1, 0, 0, (err, vtile) => {
         t.ifError(err);
         t.deepEqual(vtile.toJSON()[0].name, '_image');
@@ -230,7 +230,7 @@ test('treats unknown buffer as image', (t) => {
     });
 });
 test('errors out on bad protobuf x', (t) => {
-    zlib.deflate(new Buffer('asdf'), (err, deflated) => {
+    zlib.deflate(new Buffer.from('asdf'), (err, deflated) => {
         if (err) throw err;
         Testsource.tiles.invalid['1.0.1'] = deflated;           // invalid protobuf
         sources.invalid.getTile(1, 0, 1, (err, vtile) => {
@@ -306,7 +306,7 @@ function replacer(key, value) {
             value = value.data;
         }
         const ln = value.length || 0;
-        const buffer = new Buffer(ln);
+        const buffer = new Buffer.from(ln);
         for (let i = 0; i < ln; i++) buffer.writeUInt8(value[i], i);
         return buffer.toString('hex');
     } else {

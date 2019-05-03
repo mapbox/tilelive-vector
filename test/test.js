@@ -323,14 +323,14 @@ test('errors out on invalid tile request - negative z', (t) => {
     });
 });
 test('errors out on bad deflate', (t) => {
-    Testsource.tiles.invalid['1.0.0'] = new Buffer('asdf'); // invalid deflate
+    Testsource.tiles.invalid['1.0.0'] = new Buffer.from('asdf'); // invalid deflate
     sources.invalid.getTile(1, 0, 0, (err) => {
         t.equal('image_reader: can\'t determine type from input data', err.message);
         t.end();
     });
 });
 test('errors out on bad protobuf', (t) => {
-    zlib.deflate(new Buffer('asdf'), (err, deflated) => {
+    zlib.deflate(new Buffer.from('asdf'), (err, deflated) => {
         if (err) throw err;
         Testsource.tiles.invalid['1.0.1'] = deflated;           // invalid protobuf
         sources.invalid.getTile(1, 0, 1, (err) => {
