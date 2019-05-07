@@ -578,10 +578,10 @@ tm2z.findID = (source, id, callback) => {
 };
 
 function xray(opts, callback) {
-    Backend(opts, (err, backend) => {
+    new Backend(opts, (err, backend) => {
         if (err) return callback(err);
         if (!backend._vector_layers) return callback(new Error('source must contain a vector_layers property'));
-        Vector({
+        new Vector({
             xml: xray.xml({
                 map_properties: opts.transparent ? '' : 'background-color="#000000"',
                 vector_layers: backend._vector_layers
