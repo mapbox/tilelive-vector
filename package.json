@@ -31,8 +31,8 @@
     "@mapbox/tilejson": "^1.1.0",
     "coveralls": "~3.0.3",
     "eslint": "^5.3.0",
-    "eslint-plugin-node": "^8.0.0",
-    "nyc": "^13.1.0",
+    "eslint-plugin-node": "^9.0.1",
+    "nyc": "^14.1.0",
     "simple-statistics": "~7.0.2",
     "tape": "4.10.x"
   },
