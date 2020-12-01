@@ -1,23 +1,24 @@
-var test = require('tape');
-var tilelive = require('@mapbox/tilelive');
-var Vector = require('..');
-var profiler = require('../tile-profiler');
-var Testsource = require('./testsource');
-var ss = require('simple-statistics');
-var fs = require('fs');
-var path = require('path');
-var zlib = require('zlib');
-var _ = require('underscore');
+'use strict';
+
+const test = require('tape');
+const tilelive = require('@mapbox/tilelive');
+const Vector = require('..');
+const profiler = require('../tile-profiler');
+const Testsource = require('./testsource');
+const ss = require('simple-statistics');
+const fs = require('fs');
+const path = require('path');
+const _ = require('underscore');
 
 // Tilelive test source.
 tilelive.protocols['test:'] = Testsource;
 
-var xml = fs.readFileSync(path.resolve(__dirname + '/fixtures/a.xml'), 'utf8');
+const xml = fs.readFileSync(path.resolve(__dirname + '/fixtures/a.xml'), 'utf8');
 
-test('finds layer information', function(t) {
-    new Vector({ uri:'test:///a', xml: xml }, function(err, source) {
+test('finds layer information', (t) => {
+    new Vector({ uri:'test:///a', xml: xml }, (err, source) => {
         t.ifError(err);
-        var cb = function(err, vtile, headers) {
+        const cb = function(err, vtile, headers) {
             t.ifError(err);
             t.ok(vtile._layerInfo);
             t.end();
@@ -27,16 +28,16 @@ test('finds layer information', function(t) {
     });
 });
 
-test('returns expected layer information', function(t) {
-    new Vector({ uri:'test:///a', xml: xml }, function(err, source) {
+test('returns expected layer information', (t) => {
+    new Vector({ uri:'test:///a', xml: xml }, (err, source) => {
         t.ifError(err);
-        source._backend.getTile(0,0,0, function(err, vtile, headers) {
+        source._backend.getTile(0,0,0, (err, vtile, headers) => {
             if (err) throw err;
-            var tile = vtile;
-            var layerInfo = profiler.layerInfo(tile);
+            const tile = vtile;
+            const layerInfo = profiler.layerInfo(tile);
 
             // Tile has a 'coastline' layer
-            var coastline = _(layerInfo).where({ name: 'coastline' })[0];
+            const coastline = _(layerInfo).where({ name: 'coastline' })[0];
             t.ok(coastline);
 
             // Tile contains 4177 features
@@ -52,7 +53,7 @@ test('returns expected layer information', function(t) {
             t.equal(ss.min(coastline.duplicateCoordCount), 0);
 
             // Max/Min distance between consecutive coords
-            var diff = Math.abs(ss.max(coastline.coordDistance) - 570446.5598775251);
+            const diff = Math.abs(ss.max(coastline.coordDistance) - 570446.5598775251);
             t.ok(diff < 0.1);
             t.equal(ss.min(coastline.coordDistance), 1181.6043940629547);
 
