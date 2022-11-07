@@ -23,6 +23,7 @@
     "request": "~2.83.0",
     "spherical": "~0.1.0",
     "tar": "~2.2.1",
+    "tilelive-promise": "^2.0.0",
     "underscore": "~1.8.0"
   },
   "devDependencies": {
