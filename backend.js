@@ -52,7 +52,7 @@ Backend.prototype.getAsync = function(opts) {
             switch (opts.type) {
                 case undefined:
                 case 'tile':
-                    result = _getTile.call(self, opts);
+                    result = _getTileAsync.call(self, opts);
                     break;
                 default:
                     result = self._source.getAsync(opts);
@@ -92,7 +92,7 @@ Backend.prototype.getTile = function(z, x, y, callback) {
 };
 
 // Wrapper around backend.getTile that implements a "locking" cache.
-function _getTile(opts) {
+function _getTileAsync(opts) {
     var backend = this;
 
     return new Promise((accept, reject) => {
