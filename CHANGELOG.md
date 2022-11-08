@@ -1,5 +1,9 @@
 # Changelog
 
+## 4.1.1 - Wikimedia Fork
+
+- Pass `scale`, `legacy`, and `upgrade` params through to backend source.
+
 ## 4.1.1
 
 - Fix ETag algorithm to convert buffer as binary [#158](https://github.com/mapbox/tilelive-vector/pull/158)
