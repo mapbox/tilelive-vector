@@ -1,5 +1,11 @@
 # Changelog
 
+## 4.2.1
+
+- Security updates
+- Update mapnik to 4.3.1
+    - [4.4.0](https://github.com/mapnik/node-mapnik/blob/master/CHANGELOG.md#440) drops support for Node <10
+
 ## 4.1.1
 
 - Fix ETag algorithm to convert buffer as binary [#158](https://github.com/mapbox/tilelive-vector/pull/158)
